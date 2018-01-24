@@ -1,0 +1,46 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\defcounter {refsection}{0}\relax 
+\select@language {english}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {2}Hardware Interrupts and Program Flow}{2}{chapter.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.1}Overview}{2}{section.2.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.2}\color {blue}Prelab Questions}{2}{section.2.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.3}\color {orange}Introduction to Hardware Interrupts}{2}{section.2.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.3.1}The SysTick Timer and Interrupt}{3}{subsection.2.3.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Preparing the Main Application}{5}{section*.5}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Modifying the SysTick Interrupt}{5}{section*.6}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.4}Triggering Interrupts With External Signals}{6}{section.2.4}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.4.1}Extended Interrupts and Events Controller}{6}{subsection.2.4.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.4.2}Pin Multiplexing with the SYSCFG}{8}{subsection.2.4.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.5}Working With Interrupts}{10}{section.2.5}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.5.1}\color {orange}The Nested Vectored Interrupt Controller}{10}{subsection.2.5.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.5.2}Using CMSIS Libraries to Configure the NVIC}{11}{subsection.2.5.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Enabling and Setting Priorities for an Interrupt}{11}{section*.9}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.5.3}\color {blue}Lab Assignment: Setting up the Interrupt Handler}{12}{subsection.2.5.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.5.4}\color {orange}Interactions Between Multiple Interrupts}{13}{subsection.2.5.4}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Tail-Chaining}{13}{section*.11}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.5.5}\color {blue}Lab Assignment: Interrupt Nesting}{15}{subsection.2.5.5}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{``Starving'' Interrupts}{16}{section*.12}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Fixing with NVIC Priorities}{16}{section*.13}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.6}\color {blue}Postlab Questions}{16}{section.2.6}
+\contentsfinish 
