@@ -590,7 +590,7 @@ Four files provide the documentation for the exercises in these labs. You may do
 The GPIO is one of the most fundamental peripherals within the STM32F0. Although one of the simplest peripherals, it is still surprisingly complex and very powerful.
 
 % PASSIVE VOICE
-Open the STM32F0 peripheral reference manual to page 118; this should contain the heading ``General-purpose I/Os (GPIO).'' The reference manual includes bookmark links; if the PDF viewer used can show these (see Figure \ref{bookmarks}), use them to navigate to desired sections quickly.
+Open the STM32F0 peripheral reference manual to page 156 (Chapter 9); this should contain the heading ``General-purpose I/Os (GPIO).'' The reference manual includes bookmark links; if the PDF viewer used can show these (see Figure \ref{bookmarks}), use them to navigate to desired sections quickly.
 
 \begin{figure}[]
     \centering\includegraphics[width=\textwidth]{bookmarks}
@@ -601,7 +601,7 @@ Open the STM32F0 peripheral reference manual to page 118; this should contain th
 Each section of the reference manual first introduces the available features and modes of the peripheral. It subsequently explains in detail the operation of the different modes\textemdash including graphs, figures, and tables, all showing characteristics of the peripheral's operation. Finally, it provides detailed explanations of each user-accessible control register that configures the peripheral.
 
 % REVISE
-To understand the GPIO control registers, it is helpful to discuss the different modes in which it can operate: go back to page 118 in the reference manual (beginning of GPIO section) and look through the information on that page.
+To understand the GPIO control registers, it is helpful to discuss the different modes in which it can operate: go back to page 156 in the reference manual (beginning of GPIO section) and look through the information on that page.
 %\newpage\noindent
 The \textit{GPIO main features} section indicates that a GPIO pin can have the following modes:
 
@@ -1074,6 +1074,10 @@ If beginning with the example ``blinky'' application, the assignment can be brok
     \item Update the pin initialization and toggle code to use the new pins.
 \end{enumerate}
 
+\begin{assignment}
+	Please show the TA that your red and blue LEDs toggle. Make sure that your passoff gets recorded on the passoff spreadsheet!
+\end{assignment}
+
 
 \subsection{Configuring a GPIO Pin to Input and Reading a Button}
 
@@ -1105,6 +1109,10 @@ Your goal in this portion of the lab assignment is to change your version of the
 
 % PASSIVE
 After making these changes to the original application, it is not necessary to have a long duration delay statement each loop iteration. However, some program delay is still required (few milliseconds), otherwise the button debouncing method shown in section \ref{bounce_section} will not operate properly. 
+
+\begin{assignment}
+	Please show the TA that your LEDs toggle once each time that you press the USER button. Make sure that your passoff gets recorded on the passoff spreadsheet!
+\end{assignment}
 
 \begin{warning}
     Some GPIO peripherals contain pins with system critical functions. For example, GPIOA contains pins PA13 (SWDIO) \& PA14 (SWCLK) which are used by the debugging hardware to communicate with the STM32F0. 
