@@ -90,13 +90,28 @@
 \chapter{Hardware Interrupts and Program Flow}
 
 \section{Overview}
-This lab introduces the concept of interrupt-driven programming and guides through the configuration of interrupt-oriented peripherals. The exercises in this lab provide a foundation for utilizing interrupts in an embedded application. They introduce the practice of enabling, configuring parameters and writing handler routines to service peripheral interrupt requests. After completing this lab, you will understand how to use interrupts effectively without impacting the main application and each other. 
+This lab introduces the concept of interrupt-driven programming and guides through the configuration of interrupt-oriented peripherals; the exercises herein provide a foundation for utilizing interrupts in an embedded application. They introduce the practice of enabling, configuring parameters and writing handler routines to service peripheral interrupt requests. After completing this lab, you will understand how to use interrupts effectively without impacting the main application or each other. 
 
-\section{Introduction to Hardware Interrupts}
+\section{\color{blue}Prelab Questions}\index{Prelab Questions}
+\begin{question}[Prelab 2]
+	Please answer the following questions and hand in as your prelab for Lab 2.
+% The section locations for each question needs renumbering in respect to the section to which it refers
+	\begin{enumerate}
+		\item What is the purpose of the NVIC peripheral? %(section 3.3.1)
+		\item What is the difference between interrupt tail-chaining and nesting? %(section 3.3.2) 
+		\item In what file are the CMSIS libraries that control the NVIC? %(section 3.3.4)
+		\item What is the purpose of the EXTI peripheral? %(section 3.4.1)
+		\item What is the purpose of the SYSCFG pin multiplexers? %(section 3.4.1)
+		\item What file has the defined names for interrupt numbers? %(section 3.5.1)
+		\item What file has the Vector table implementation? %(section 3.2 or 3.5.2)
+	\end{enumerate}
+\end{question}
+
+\section{\color{orange}Introduction to Hardware Interrupts}
 % What is an interrupt
-Many embedded processors including the ARM Cortex-M0 STM32F0 family, are single-core, single-thread devices. However, many embedded applications are not a single, linear thread. These programs typically operate at low enough abstractions such that most operating system concepts such as scheduling or multi-threading simply do not exist. Instead, program concurrency is directly driven by the processor hardware. The method by which this happens are called \textit{interrupts}. 
+Many embedded processors\textemdash including the ARM Cortex-M0 STM32F0 family\textemdash are single-core, single-thread devices; however, many embedded applications are not a single, linear thread: these programs typically operate at low enough abstractions such that most operating system concepts\textemdash such as scheduling or multi-threading\textemdash simply do not exist. Instead, the processor hardware directly drives the program concurrency, using a method known as \textit{interrupts}. 
 
-An interrupt is the process by which the hardware temporarily suspends the execution of the main single threaded program to execute specific regions of code at known locations in memory. Interrupts are named such because these program jumps ``interrupt'' the main program. Figure \vref{interrupt_basics} demonstrates the basic operation of an interrupt in a system such as the STM32F0. 
+An interrupt is the process in which the hardware temporarily suspends the execution of the main single threaded program to execute specific regions of code at known locations in memory. We call them interrupts because these program jumps to ``interrupt'' the main program. Figure \ref{interrupt_basics} demonstrates the basic operation of an interrupt in a system such as the STM32F0. 
 
 %(Basic interrupt operation)
 \begin{figure}[h]
@@ -105,13 +120,13 @@ An interrupt is the process by which the hardware temporarily suspends the execu
     \label{interrupt_basics}
 \end{figure}
 
-Peripherals within the embedded device generally generate these interrupts. These events signal a change in the peripheral state, such as receiving data from a communications interface. Other interrupts signal error conditions or recover from bad processor states caused by disallowed operations within the main program. Many interrupts trigger from the user's code to perform operations with a higher priority than the main thread. 
+Peripherals within the embedded device typically generate these interrupts; these events signal a change in the peripheral state\textemdash such as receiving data from a communications interface. Other interrupts signal error conditions or recover from bad processor states. The user's code may use interrupts to perform operations with a higher priority than the main thread. 
 
-Every interrupt has a hardware number designation. An interrupt's number indicates its hardware priority and indexes into the \textit{Vector Table}. The Vector Table for a processor usually exists at the beginning of the system address space and is a list of memory addresses associated with the handling of a specific interrupt. For example, the location of the RESET vector (in actuality a RESET interrupt) in the Vector Table is right at the beginning. This indicates that the first few instructions that the processor executes after power-on are a load and branch to the reset handling code. 
+Every interrupt has a hardware number designation: an interrupt's number indicates its hardware priority and indexes into the \textit{Vector Table}. The Vector Table for a processor usually exists at the beginning of the system address space and is a list of memory addresses associated with the handling of a specific interrupt. For example, the location of the RESET vector (in actuality a RESET interrupt) in the Vector Table is right at the beginning. This indicates that the first few instructions that the processor executes after power-on are a load and branch to the reset handling code. 
 
 Whenever an interrupt triggers, the processor hardware uses the interrupt number to index into the Vector Table to find the memory address of the interrupt handling code. The processor hardware saves the current register and stack state before branching to the loaded handler address. After the routine completes, the processor restores the original state, and the main program executes almost as if no interrupt had occurred. 
 
-Figure \vref{vector_table} (peripheral reference manual pages 217-219) shows the documentation for the STM32F072 Vector Table. The Vector Table's location lies within the startup assembly code for the processor; it defines human-readable names used to designate functions as the appropriate interrupt handling code. When compiling and linking, the toolchain places the address of these functions within the Vector Table data.  
+Figure \ref{vector_table} (peripheral reference manual pages 217-219) shows the documentation for the STM32F072 Vector Table. The Vector Table lies within the startup assembly code for the processor; it defines human-readable names used to designate functions as the appropriate interrupt handling code. When compiling and linking, the toolchain places the address of these functions within the Vector Table data.  
 
 \begin{figure}[]
     \centering\includegraphics[height=\textheight]{vector_table}
@@ -133,7 +148,7 @@ The Kiel:MDK toolchain and HAL library have already defined a few interrupt hand
 \subsection{The SysTick Timer and Interrupt}
 The SysTick timer is an important but simple peripheral within most ARM processors. It consists of a 16-bit countdown timer which starts at a software configured value; this value decrements alongside the processor clock, and reaching zero triggers an interrupt, and the peripheral resets. The SysTick interrupt is often useful as a time reference for application code, an example of this is the \texttt{HAL\_Delay()} function mentioned in the previous lab. 
 
-Figure \vref{systick} shows how the SysTick interrupt pauses the main application to execute a small section of interrupt handler code. Because there is a constant delay between successive executions of the handler, longer intervals that are multiples of the SysTick period can be accurately timed by counting a number of interrupt executions.  
+Figure \ref{systick} shows how the SysTick interrupt pauses the main application to execute a small section of interrupt handler code.Due to a constant delay between successive executions of the handler, you may calculate timing accurately with longer intervals that are multiples of the SysTick period by counting the number of interrupt executions.  
 
 \begin{figure}[h]
     \centering\includegraphics[width=\textwidth]{systick}
@@ -141,20 +156,20 @@ Figure \vref{systick} shows how the SysTick interrupt pauses the main applicatio
     \label{systick}
 \end{figure}
 
-By default, the HAL library configures the SysTick timer to a rate of 1000Hz, giving a 1ms period between each interrupt. The \texttt{HAL\_Delay()} function operates by monitoring a global variable which is incremented within the SysTick interrupt handler. Since the variable will increase by 1 each millisecond, the delay function can stall the processor for a desired amount of time by watching and waiting until the variable equals a calculated target amount. 
+By default, the HAL library configures the SysTick timer to a rate of 1000 Hz, giving a 1 ms period between each interrupt. The \texttt{HAL\_Delay()} function operates by monitoring a global variable which increments within the SysTick interrupt handler; since the variable increases by one each millisecond, the delay function can stall the processor for a desired time by watching and waiting until the variable equals a calculated target amount. 
 
 
 \begin{exercise}[Modifying an Existing Interrupt]
     \label{ex1}
-    In this exercise, you will modify the SysTick timer interrupt to flash the blue LED on the Discovery board. You should begin this lab with a blank project generated from STMCube.
+    In this exercise, you will modify the SysTick timer interrupt to flash the blue LED on the Discovery board; you should begin this lab by generating a blank project within STMCube.
     
    \subsubsection{Preparing the Main Application}
    \begin{enumerate}
        \item Initialize all of the LED pins in the main function.
        \begin{itemize}
-           \item Run-once code such as initializations should execute before the main infinite loop and never in an interrupt handler.
+           \item Run-once code such as initializations should execute before the main infinite loop; never use an interrupt handler to do this!
        \end{itemize}
-       \item Set the green LED (PC9) high. (it will be used later in the lab)
+       \item Set the green LED (PC9) high (we will use this later in the lab)
        \item Toggle the red LED (PC6) with a moderately-slow delay (400-600ms) in the infinite loop.
        \begin{itemize}
            \item This LED indicates whether the main loop is executing; use it to determine if the system is stuck in an interrupt.
@@ -164,44 +179,47 @@ By default, the HAL library configures the SysTick timer to a rate of 1000Hz, gi
     \begin{enumerate}
         \item Find the \texttt{void SysTick\_Handler(void)} function in the \textit{stm32f0xx\_it.c} file. 
         \begin{itemize}
-            \item Located under the \textit{Application/User} {\textmu}Vision project folder. This file contains pre-generated interrupt handlers. 
+            \item Look under the \textit{Application/User} {\textmu}Vision project folder. 
+            \item This file contains pre-generated interrupt handlers. 
         \end{itemize}
         \item Modify the SysTick handler so that it toggles the blue LED (PC7) every 200ms. 
         \begin{itemize}
             \item The HAL library uses the SysTick timer. Do not remove any pre-generated code in the handler.
         \end{itemize}
-        \item The modified SysTick handler will be called every millisecond. Because of this periodicity, you can count the number of iterations as a timing basis.
+        \item The modified SysTick handler interrupts every millisecond; you can use this periodicity to count the number of iterations as a timing mechanism.
         \begin{itemize}
-            \item For example, toggling an LED every 100th time the handler is called results in 100 ms between blinks.
+            \item For example, toggling an LED every 100th execution of the interrupt results in 100 ms between blinks.
             \item You will need to use either a volatile global or local-static variable to store interrupt count.
-            \item \textbf{Do not use delay functions in the interrupt handler!}
+            \item \textbf{Do not use delay functions in the interrupt handler!} See warning below.
         \end{itemize}
     \item Compile and load your application onto the Discovery board. Remember to press the \textbf{RESET} button after it loads!
     \end{enumerate}
 
-     If completed correctly, both the red and blue LEDs should be flashing at different rates. If the blue LED appears to be constantly on, check to ensure that you are only toggling it every 200ms.
+     Both the red and blue LEDs should be flashing at different rates. If the blue LED appears to stay constant and not toggle, check to ensure that you are only toggling it every 200ms.
 \end{exercise}
 
 \begin{warning}
-    \textbf{\underline{Never} use any sort of delay within an interrupt handler!} Handler functions are intended to quickly perform work and then return. The HAL delay functions will deadlock if used in interrupts with the same or higher priority than the SysTick.
+    \textbf{\underline{Never} use any sort of delay within an interrupt handler!} Handler functions should perform work quickly and then return\textemdash the HAL delay functions will deadlock within an interrupt with the same or higher priority than the SysTick.
 \end{warning}
 
 \section{Triggering Interrupts With External Signals}
 % Polling vs Interrupt/Idle Sleep
 
-In the previous lab, we used a button press on the Discovery board to toggle between two LEDs. To do this, we repeatedly checked the button state in the infinite loop of the main application. This method of detection is called \textit{polling}. Polling has the advantage that the repetitive and periodic checking enables tricks such as software debouncing. However it has the disadvantage of using a significant amount of processor cycles even when the device could otherwise be idle. 
+In the previous lab, we used a button press on the Discovery board to toggle between two LEDs. We did this by repeatedly checking the button state in the infinite loop of the main application; we call this method \textit{polling}. Polling has the advantage that the repetitive and periodic check enables tricks like software debouncing; it has the disadvantage, however, of using a significant number of processor cycles even when the device could otherwise sit idle. 
 
-In some embedded systems such as the Discovery board, wasting energy on polling is not a significant challenge as continuous power is readily available. However, many battery-powered systems need to reduce the power consumption by any means possible to prolong the battery life.
+In some embedded systems\textemdash such as the Discovery board\textemdash wasting energy on polling is not a significant challenge as we have a constant supply of power; many battery-powered systems, however, must reduce power consumption to prolong the battery life and therefore field service.
 
-One method of avoiding continuous polling is to utilize the interrupt system of the processor to monitor and detect changes in a pin's state. This ability makes it possible to place the device into a low-power mode when no other processing is required. 
+One method of avoiding continuous polling is to leverage the interrupt system to monitor and detect changes in a pin's state; this makes it possible to place the device into a low-power mode when no other processing is necessary. 
 
-The exercises in this lab will be using the ``Wait for Interrupt'' (WFI) assembly instruction which puts the processor into ``sleep'' mode (without changing other registers). This is the least drastic of the low-power modes that the STM32F0 offers. In this state, the ARM processor stops, but all memory and peripherals operate normally. Any hardware interrupt has the capability to start the processor again; once the interrupt handler exits, the main program will continue the main application thread. Other low-power modes selectively shutdown additional peripherals, system oscillators, and power circuitry. These modes are more limited in the methods available to wake them up, and some of them lose device state; therefore, it is important to use the correct low-power mode.  
+The exercises in this lab uses the ``Wait for Interrupt'' (WFI) assembly instruction, where the processor enters into ``sleep'' mode (without changing other registers). This is the least drastic of the low-power modes that the STM32F0 offers. In this state the ARM processor stops, but all memory and peripherals operate normally. Any hardware interrupt has the capability to start the processor again; once the interrupt handler exits, the main program will continue the main application thread. 
+
+Other low-power modes selectively shut down additional peripherals, system oscillators, and power circuitry. These modes are more limited in the methods available to wake them up\textemdash some of them may even lose device state! It is therefore imperative that you use the correct low-power mode for your application.  
 
 \subsection{Extended Interrupts and Events Controller} \label{exti}
 
-The \textit{Extended Interrupts and Events Controller} (EXTI) is the peripheral that allows non-peripheral sources to trigger interrupts. While typically used to generate interrupts from the GPIO pins of the device, it also has the ability to monitor various internal signals such as the brownout protection circuitry. (low-voltage shutdown)
+The \textit{Extended Interrupts and Events Controller} (EXTI) peripheral allows non-peripheral sources to trigger interrupts. While its typical use is to generate interrupts from the GPIO pins of the device, it may also monitor various internal signals such as the brownout protection circuitry (low-voltage shutdown).
 
-The EXTI documentation begins on page 219 of the peripheral reference manual. Similar to the NVIC, bits within the EXTI registers do not feature names suggesting the signals they control. The documentation within \textit{functional description} section on the peripheral describes the mapping between EXTI event ``lines'' or input sources and the control bits. 
+The EXTI documentation begins on page 219 (Section 12.2) of the peripheral reference manual. Similar to the NVIC, bits within the EXTI registers do not feature names suggesting the signals they control. The documentation within the \textit{functional description} section on the peripheral describes the mapping between EXTI event ``lines''\textemdash input sources\textemdash and the control bits. 
 
 
 \begin{itemize}
@@ -211,32 +229,32 @@ The EXTI documentation begins on page 219 of the peripheral reference manual. Si
     \end{itemize}
     \item \textbf{Event mask register (EXTI\_EMR)}
     \begin{itemize}
-        \item Processor events are similar in design to interrupts but do not cause program execution to branch to separate handler code. Events are typically used to wake the processor from low-power modes. The EMR enables input signals to generate processor events. 
+        \item Processor events are similar in design to interrupts but do not cause program execution to branch to separate handler code; events generally wake the processor from low-power modes. The EMR enables input signals to generate processor events. 
     \end{itemize}
     \item \textbf{Rising trigger selection register (EXTI\_RTSR)}
     \begin{itemize}
-        \item All external (pin) interrupts are edge-sensitive. This means that they only generate interrupt requests at the transitions from one logic state to another. The RTSR enables a rising/positive-edge trigger for a pin.
+        \item All external (pin) interrupts are edge-sensitive, which means that they only generate interrupt requests at the transitions from one logic state to another. The RTSR enables a rising/positive-edge trigger for a pin.
     \end{itemize}
     \item \textbf{Falling trigger selection register (EXTI\_FTSR)}
     \begin{itemize}
-        \item The FTSR enables a negative/falling-edge trigger for a pin. The EXTI allows both rising and falling triggers for inputs.  
+        \item The FTSR enables a negative/falling-edge trigger for a pin. The EXTI allows enabling both rising and falling triggers for inputs.  
     \end{itemize}
     \item \textbf{Software interrupt event register (EXTI\_SWIER)}
     \begin{itemize}
-        \item The SWIER register allows the user to manually trigger any of the interrupt or event conditions within the EXTI as long as the matching bits in the IMR or EMR registers are also set. 
+        \item The SWIER register allows the user to trigger any of the interrupt or event conditions within the EXTI (as long as the matching bits in the IMR or EMR registers are also set). 
     \end{itemize}
     \item \textbf{Pending register (EXTI\_PR)}
     \begin{itemize}
-        \item  The pending register indicates whether an trigger event has occurred on an input signal since the pending flag was last cleared. As long as the corresponding interrupt is enabled the EXTI interrupt handler will be repeatedly called unless the corresponding pending flags are cleared. 
+        \item  The pending register indicates whether an event has occurred on an input signal since the last clear. If set, the EXTI interrupt handler will trigger repeatedly until the corresponding pending flags clear. Note that some events will self-clear this bit, so manual clearing is unnecessary. 
     \end{itemize}
 \end{itemize}
 
 \begin{exercise}[Configuring the EXTI]
     \label{ex2}
-   The next few exercises involve using the EXTI peripheral to generate interrupts on the rising-edge of the user button (PA0). The following steps should take place in the main function before the infinite loop. 
+   This next exercise uses the EXTI peripheral to generate interrupts on the rising-edge of the user button (PA0). Place this code in the main function \textbf{before} the infinite loop. 
     \begin{enumerate}
-        \item Configure the button pin (PA0) to input-mode, low-speed and with the internal pull-down resistor enabled. 
-        \item Pin PA0 is connected to the EXTI input line 0 (EXTI0). 
+        \item Configure the button pin (PA0) to input-mode at low-speed, with the internal pull-down resistor enabled. 
+        \item Pin PA0 connects to the EXTI input line 0 (EXTI0). 
         \begin{itemize}
             \item We will explore the relationship between pins and the EXTI input lines in the next section. 
             \item The first 16 inputs to the EXTI are for external interrupts; for example, EXTI3 is the 3rd input line.
@@ -244,11 +262,11 @@ The EXTI documentation begins on page 219 of the peripheral reference manual. Si
         \item Enable/unmask interrupt generation on EXTI input line 0 (EXTI0).
         \item Configure the EXTI input line 0 to have a rising-edge trigger.
         \begin{itemize}
-            \item The EXTI is documented in section 12.2 of the peripheral reference manual. (page 219, under Interrupts and Events)
+            \item The peripheral reference manual documents EXTI in section 12.2 (page 219).
         \end{itemize}
     \end{enumerate}
 
-    \noindent Because of the low-level wakeup functions it provides, the EXTI peripheral always connects to the peripheral clock, so it is not necessary to enable via the RCC.   
+    \noindent Due to the low-level wakeup functions it provides, the EXTI peripheral always connects to the peripheral clock, so it is not necessary to enable via the RCC.   
 \end{exercise}
 
 % What is the EXTI Peripheral 
@@ -259,11 +277,14 @@ The EXTI documentation begins on page 219 of the peripheral reference manual. Si
 % SYSCFG Muxes
 Although the STM32F0 family has the ability to generate external interrupts on almost any pin, only 16 available input lines connect to the EXTI; therefore, a series of pin multiplexers are necessary to select the pins that connect to the limited EXTI inputs.  
 
-The \textit{System Configuration Controller} (SYSCFG) peripheral controls these multiplexers: the SYSCFG deals primarily with signal routing and controls data transfer between peripherals and memory, remapping portions of memory, and some high-power communication modes. 
+The \textit{System Configuration Controller} (SYSCFG) peripheral controls these multiplexers; the SYSCFG deals primarily with signal routing, and controls data transfer between peripherals and memory, remapping portions of memory, and some high-power communication modes. 
 
-Figure \vref{exti_mux} shows the SYSCFG pin multiplexers used by the EXTI. These multiplexers group external pins by their orderings within the GPIO peripherals. For example, PA0, PB0 ... PF0 are on a single multiplexer with the output routed to the EXTI0 input. Because only a single pin from a group may be in use, select pins such that they do not conflict with each other when using multiple external interrupts.
+Figure \ref{exti_mux} shows the SYSCFG pin multiplexers that the EXTI uses; these multiplexers group external pins by their orderings within the GPIO peripherals\textemdash for example, PA0, PB0 ... PF0 are on a single multiplexer with the output routed to the EXTI0 input. 
 
-Use the EXTIx registers within the SYSCFG peripheral to configure the multiplexers. The register maps for these begin on page 177 of the peripheral reference manual. 
+\begin{warning}Since only a single pin from a group may be in use, select pins such that they do not conflict with each other when using multiple external interrupts. Careful planning and forethought is necessary to avoid such conflicts in your designs, but it is much simpler to address those issues before you begin programming than if you choose to address them in the later design stages.
+\end{warning}
+
+Use the EXTIx registers within the SYSCFG peripheral to configure the multiplexers. The register maps for these begin on page 177 (Section 10.1.2) of the peripheral reference manual. 
 
 \begin{figure}[]
     \centering\includegraphics[height=0.5\textheight]{exti_mux}
@@ -278,7 +299,7 @@ Use the EXTIx registers within the SYSCFG peripheral to configure the multiplexe
         \item Use the RCC to enable the peripheral clock to the SYSCFG peripheral.
         \item Determine which SYSCFG multiplexer can route PA0 to the EXTI peripheral.
         \begin{itemize}
-            \item Information about the SYSCFG is in section 10 of the peripheral reference manual. (page 173)
+            \item Information about the SYSCFG is in section 10 of the peripheral reference manual (page 173).
             \item Each multiplexer indicates the input line/signal of the EXTI to which they connect.
         \end{itemize}
         \item Each of the EXTICRx registers control multiple pin multiplexers. Find which register contains the configuration bits for the required multiplexer. 
@@ -292,13 +313,13 @@ Use the EXTIx registers within the SYSCFG peripheral to configure the multiplexe
 
 
 \section{Working With Interrupts}
-%Figure \vref{peripherals}
+%Figure \ref{peripherals}
 Figure 1.3 in the previous lab showed a block diagram of the peripherals within an STM32F072 device. Considering that many of these peripherals can generate interrupts, the system must recognize and manage a large number of possible sources. Some peripherals share interrupts, and a single peripheral may have multiple trigger conditions.  
 
 The large number of possible interrupt sources necessitates a way to enable, sort, and otherwise manage these sources. Because of the tight binding of the interrupts to the processor core within the ARM Cortex-M0 itself, we make use of the Nested Vectored Interrupt Controller (NVIC).
 
-\subsection{The Nested Vectored Interrupt Controller}
-The primary responsibilities of the NVIC are enabling and disabling interrupts, indicating requests waiting for servicing, canceling pending interrupt requests, and establishing how multiple interrupts interact through configurable priorities. Figure \vref{nvic} shows a simplified block diagram of the NVIC.
+\subsection{\color{orange}The Nested Vectored Interrupt Controller}
+The primary responsibilities of the NVIC are enabling and disabling interrupts, indicating requests waiting for servicing, canceling pending interrupt requests, and establishing how multiple interrupts interact through configurable priorities. Figure \ref{nvic} shows a simplified block diagram of the NVIC, also available from \textit{The Definitive Guide to Arm Cortex-M0 and Cortex-M0+ Processors}.
     
 %(Graphic with NVIC taking processor-external signals and controlling the PC and register file)
 \begin{figure}[h]
@@ -307,43 +328,43 @@ The primary responsibilities of the NVIC are enabling and disabling interrupts, 
     \label{nvic}
 \end{figure}
 
-Depending on the type of ARM core within a device, the NVIC features different capabilities. Within a Cortex M0 device such as the STM32F0, the peripheral only contains the few types of control registers. Because the NVIC is a ARM-core peripheral, its documentation exists in the ARM core and programming manual\textemdash not the STM32F0 peripheral reference manual. Additionally the structure and register definitions are in the \textit{core\_cm0.h} file\textemdash not in the \textit{stm32f072xb.h} like the other peripherals.  
+Depending on the type of ARM core within a device, the NVIC features different capabilities. Within a Cortex M0 device such as the STM32F0, the peripheral only contains the few types of control registers. Since the NVIC is a ARM-core peripheral, its documentation exists in the ARM core and programming manual\textemdash not the STM32F0 peripheral reference manual. Similarly the structure and register definitions lie within the \textit{core\_cm0.h} file, and not in the \textit{stm32f072xb.h} with the other peripherals.  
 
-Open the core programming manual and go to page 71. Beginning here is the register documentation for the NVIC peripheral. A summary of the NVIC registers is as follows:
+Open the core programming manual and go to page 70 (Section 4.2) which begins the register documentation for the NVIC peripheral. A summary of the NVIC registers is as follows:
 
 \begin{itemize}
     \item \textbf{Interrupt set-enable register (ISER)}
         \begin{itemize}
             \item The ISER register enables interrupts and indicates which are active.
-            Writing a `1' to a bit enables the matching interrupt, this register is ``read and set only,'' meaning that it ignores attempts to clear bits. 
+            Setting a bit enables the corresponding interrupt. This register is ``read and set only,'' meaning that it ignores attempts to clear bits. 
         \end{itemize}
     \item \textbf{Interrupt clear-enable register (ICER)}
         \begin{itemize}
             \item The ICER register disables interrupts.
-            This register uses a write to clear scheme. Writing a `1' to a bit disables the matching interrupt. This register is ``read and write-one-clear only,'' meaning that it ignores attempts to clear bits (that is, enable interrupts). 
+            This register uses a write to clear scheme: setting a bit \textbf{disables} the matching interrupt. This register is ``read and write-one-clear only,'' meaning that it ignores attempts to clear bits (that is, enable interrupts). 
         \end{itemize}
     \item \textbf{Interrupt set-pending register (ISPR)}
         \begin{itemize}
-            \item The ISPR shows which interrupts are pending, and can manually force interrupts into a pending state. 
+            \item The ISPR shows which interrupts are pending currently; you may also set a bit in order to force a manual interrupt. 
         \end{itemize}
     \item \textbf{Interrupt clear-pending register (ICPR)}
         \begin{itemize}
-            \item The ICPR shows which interrupts are pending and can manually clear pending status for an interrupt; this is useful to cancel an interrupt request before the interrupt handler launches.
+            \item The ICPR shows which interrupts are pending currently, which you may manually clear; this is useful to cancel an interrupt request before the interrupt handler launches.
         \end{itemize}
     \item \textbf{Interrupt priority registers (IPR0-IPR7)}
         \begin{itemize}
             \item These registers configure the priorities for each interrupt. 
-            \item Each IPR register contains four 8-bit regions dedicated to configuring the priority of a specific interrupt; the NVIC within the STM32F0s only has the uppermost two bits from these regions implemented, giving four possible configurable priority levels. More bits are available on other chipsets.           
+            \item Each IPR register contains four 8-bit regions to set the priority of an interrupt; the NVIC within the STM32F0 only has the uppermost two bits from these regions implemented, giving four possible configurable priority levels (0-3). More bits are available on other chipsets.           
         \end{itemize}
 \end{itemize}
 
  
 \subsection{Using CMSIS Libraries to Configure the NVIC}
-Similar to ST Microelectronics\textemdash which publishes the HAL library for STM32F0 peripherals\textemdash ARM Ltd provides the \textit{cortex microcontroller software interface standard} (CMSIS) library which controls Cortex M0 peripherals. 
+Similar to ST Microelectronics, which publishes the HAL library for STM32F0 peripheral, ARM Ltd. provides the \textit{cortex microcontroller software interface standard} (CMSIS) library which controls Cortex M0 peripherals. 
 
 Although the NVIC has a fairly simple register interface, safely modifying interrupts can become a complicated task. One of the main issues with directly modifying NVIC registers is that if an interrupt occurs during the process, it may corrupt or overwrite the register state.  
 
-The NVIC lies within the ARM core; therefore, its interface remains consistent across multiple vendors devices. This is beneficial because the CMSIS library functions are usually available regardless of the specific chip manufacturer. 
+The NVIC lies within the ARM core; its interface therefore remains consistent across multiple vendors devices. This is beneficial since the CMSIS library functions usually are available regardless of the specific chip manufacturer. 
 
 Within the exercises in these labs you have the choice of controlling the NVIC through the CMSIS library or register access. These CMSIS functions are located after the peripheral structure and register definitions in the \textit{core\_cm0.h} file. 
 
@@ -351,7 +372,11 @@ Within the exercises in these labs you have the choice of controlling the NVIC t
 
 Using the CMSIS library functions in \textit{core\_cm0.h} simplifies configuring the NVIC. These functions identify the interrupt to be modified by a number representing its index in the Vector table. These numbers have conveniently been given defined names in the \textit{IRQn\_Type} enumeration within the \textit{stm32f072xb.h} file.  
 
-Because the NVIC within the STM32F0 has two configuration bits for each interrupt's priority, four software priority levels are available. The CMSIS library functions accept a numeric value in the range of [0-3] as allowed priority levels. The lower the priority value given, the higher the actual priority assigned to the interrupt by the NVIC. Negative values for interrupts are possible, but only for existing priority interrupts like exception and reset interrupts; this way, they will always override user-defined interrupts.
+Because the NVIC within the STM32F0 has two configuration bits for each interrupt's priority, four software priority levels are available. The CMSIS library functions accept a numeric value in the range of [0-3] as allowed priority levels. The \textbf{lower} the numerical value given, the \textbf{higher} the precedence assigned to the interrupt by the NVIC.
+
+Think of these values as the place in line they would stand according to importance, with 0 being VIP, and 3 being a B-list celebrity (the main program code being regular people with no celebrity status).
+
+Negative priority values for interrupts are possible, but only for specialized priority interrupts like exception and reset interrupts; this way, they \textbf{always} override user-defined interrupts.
 
 \begin{warning}
     Remember that the highest software priority level for the NVIC is 0; the lowest is 3. The hardware priorities also follow a similar scheme with lower indexes in the Vector table having higher priority. 
@@ -359,7 +384,7 @@ Because the NVIC within the STM32F0 has two configuration bits for each interrup
 
 \begin{exercise}[Enable and Set Priority of the EXTI Interrupt]
     \label{ex4}
-    Unlike most peripherals, the EXTI has multiple interrupts assigned to it. Each interrupt is bound to a selection of the EXTI input lines, and the correct one must be chosen to match the input line used. 
+    Unlike most peripherals, the EXTI has multiple interrupts assigned to it. Each interrupt is bound to a selection of the EXTI input lines, and you must choose the correct to match the input line desired. 
     \begin{enumerate}
         \item In the \textit{stm32f0xb.h} file, locate the \textit{IRQn\_Type} enumeration values that reference the EXTI peripheral. 
         \begin{itemize}
@@ -398,26 +423,24 @@ Because the NVIC within the STM32F0 has two configuration bits for each interrup
 
 
 
-\subsection{Setting up the Interrupt Handler}  \label{handler_setup}
-Once enabling the interrupt within both the peripheral and NVIC, it is time to define a region of code as the appropriate handler. 
+\subsection{\color{blue}Lab Assignment: Setting up the Interrupt Handler}  \label{handler_setup}
+Once you have enabled the interrupt within both the peripheral and NVIC, it is time to define a region of code as the appropriate handler. 
 
-The MDK:ARM toolchain includes a set of function names used for interrupt handlers. These are automatically referenced by the Vector table when compiling and linking. Declaring a function using one of these defined names automatically makes it into an interrupt handler.
+The MDK:ARM toolchain includes a set of function names used for interrupt handlers; the Vector table automatically reference these names when compiling and linking. Declaring a function using one of these defined names automatically makes it into an interrupt handler.
 
-The Vector table in \textit{startup\_stm32f072xb.s} defines the names; your interrupt handlers must be declared to accept no arguments and have no return value. 
+The Vector table in \textit{startup\_stm32f072xb.s} defines the names; you must declare your interrupt handlers to accept no arguments and have no return value. 
 
-Most peripherals have a status register containing flag bits for pending interrupt requests; however, even in those without dedicated registers, most interrupts set status flags within their peripheral. These flags are necessary to generate interrupt requests. Typically you will need to clear the matching status bit manually for the interrupt condition that you are handling. Otherwise, the interrupt will repeat continuously because the request never acknowledges as complete. 
+Most peripherals have a status register containing flag bits for pending interrupt requests; however, even in those without dedicated registers, most interrupts set status flags within their peripheral. These flags are necessary to generate interrupt requests. Typically you will need to clear the matching status bit manually for the interrupt condition that you are handling; otherwise, the interrupt will repeat continuously because the request never acknowledges as complete. 
 
 \begin{warning}
     Always check the conditions for clearing status flags in the reference manual!
     
-    Many status registers clear by writing a one to the bit position; others are read-only and must clear through other methods. 
-    
-    Some peripherals such as the USART automatically clear some status flags; for example, explicitly clearing the receive interrupt flag in a USART is unnecessary as it self-clears whenever the processor reads the receive register. 
+    Many status registers clear by writing a one to the bit position; others are read-only and must clear through other methods. Some peripherals such as the USART automatically clear some status flags, so clearing the flag manually is unnecessary.
 \end{warning}
 
-\begin{exercise}[Writing the EXTI Interrupt Handler]
+\begin{assignment}[Writing the EXTI Interrupt Handler]
     \label{ex5}
-    This is the final step in preparing an interrupt for use. One of the biggest difficulties with using interrupts is the number of steps that you must complete correctly before getting a positive result.
+    This is the final step in preparing an interrupt for use. One of the biggest difficulties with using interrupts is the number of steps that you must complete correctly before getting a functioning handler.
     
     \begin{enumerate}
         \item The file \textit{startup\_stm32f072xb.s} contains the names of interrupt handlers. Find the handler name that matches the named interrupt number you found in the previous exercise. 
@@ -430,16 +453,17 @@ Most peripherals have a status register containing flag bits for pending interru
         \item Clear the appropriate flag for input line 0 in the EXTI pending register within the handler.
         \begin{itemize}
             \item Otherwise the handler will loop because the interrupt request never acknowledged.
-            \item Read the bit description of the pending flags underneath the register map. These bits require a different action to clear them.
+            \item Read the bit description of the pending flags underneath the register map: these bits require a different action to clear them.
         \end{itemize}
         \item Compile and load your application onto the Discovery board.
+        \item Pass off this portion with the TA.
     \end{enumerate}
     
-    \noindent If you completed all the previous exercises, successfully the red and blue LEDs should continue to blink while the green and orange LEDs toggle between each other whenever the user button is pressed. 
+    \noindent If you completed all the previous exercises successfully, the red and blue LEDs should continue to blink while the green and orange LEDs toggle between each other whenever the user button is pressed. 
     
     If the green and orange LEDs do not toggle, check the configuration of the EXTI and NVIC peripherals. If the red LED stops flashing and the green and orange LEDs appear to light up consistently, you are not properly clearing the pending flag in the EXTI, and your application is stuck in the EXTI interrupt handler.
     
-\end{exercise}
+\end{assignment}
 
 % talk about vector table defining names in startup_stm32f072xb.s
 
@@ -448,7 +472,7 @@ Most peripherals have a status register containing flag bits for pending interru
 %    
 %    Looking down the table, we can find the name for the USART1 handler to be ``USART1\_IRQHandler'' We can use this name to define a function anywhere within the code project. Typically, interrupt handlers are placed either within the interrupt specific code file \textit{stm32f0xx\_it.c}, main.c, or files containing the peripheral's driver.  
 %    
-%    Figure \vref{usart_isr} shows a completed interrupt handler for the USART1. It begins by checking all enabled conditions to find the one triggering the interrupt, clears the condition flag, and performs some action. 
+%    Figure \ref{usart_isr} shows a completed interrupt handler for the USART1. It begins by checking all enabled conditions to find the one triggering the interrupt, clears the condition flag, and performs some action. 
 %    
 %    \code{./Files/usart_isr.c}{Example USART RXNE Interrupt Handler}{usart_isr}
 %    
@@ -470,8 +494,8 @@ Most peripherals have a status register containing flag bits for pending interru
 %%\end{example}
 
 
-\subsection{Interactions Between Multiple Interrupts}
-As the number of enabled interrupts within a system increases, the possibility of an interrupt request occurring during the handler of another becomes more likely; therefore, we must have a deterministic way of dealing with inter-interrupt interactions. The NVIC solves this problem with a system of both software configurable and fixed hardware interrupt priorities. Depending on these priority settings two outcomes are possible for multi-interrupt conditions. Figure \vref{tailChain_nesting} shows a graphical representation of each mode of operation.
+\subsection{\color{orange}Interactions Between Multiple Interrupts}
+As the number of enabled interrupts within a system increases, the possibility of an interrupt request occurring during the handler of another becomes more likely; we therefore must have a deterministic way to deal with inter-interrupt interactions. The NVIC solves this problem with a system of both software configurable and fixed hardware interrupt priorities. Depending on these priority settings two outcomes are possible for multi-interrupt conditions. Figure \ref{tailChain_nesting} shows a graphical representation of each mode of operation.
 
 \begin{figure}[]
     \centering\includegraphics[width=0.6\textwidth]{tailChain_nesting}
@@ -480,46 +504,47 @@ As the number of enabled interrupts within a system increases, the possibility o
 \end{figure}
 
 \subsubsection{Tail-Chaining}
-Some embedded processors have only a built-in hardware ordering between interrupts. In these systems, if multiple interrupt trigger concurrently or during a handler, they execute one after each other according to the hardware priority. In this mode known as \textit{tail-chaining}, and interrupt handlers do not interrupt each other. Tail-chaining can use a simple save and restore mechanism for transitioning from the main thread, but it has the disadvantage of allowing a rapidly triggering or long running interrupt high on the hardware priority to ``starve''\textemdash or prevent lower interrupts from executing. 
+Some embedded processors have only a built-in hardware ordering between interrupts. In these systems, if multiple interrupt trigger concurrently or during a handler, they execute one after each other in succession according to the hardware priority. In this mode known as \textit{tail-chaining}, interrupt handlers do not interrupt each other. Tail-chaining may use a simple save and restore mechanism for transitioning from the main thread, but it has the disadvantage of allowing a rapidly-triggering or long-running interrupt high on the hardware priority to ``starve'', or prevent lower interrupts from executing. 
 
-The NVIC will tail-chain interrupts configured to the same software priority within the IPR registers. If multiple interrupts with the same software priority become pending at the same time, the built-in hardware ordering will determine the next handler to launch.
+The NVIC will tail-chain interrupts configured to the same software priority within the IPR registers. If multiple interrupts with the same software priority trigger simultaneously, the built-in hardware ordering determines the next handler to launch.
 
-\subsection{Interrupt Nesting}
-Unlike systems having only hardware interrupt priorities, the NVIC allows important interrupts to interrupt lower priority handlers. This process called \textit{nesting} requires a more complex context-switch mechanism but otherwise works identically to how interrupts pause execution of the main application thread. 
+\subsection{\color{blue}Lab Assignment: Interrupt Nesting}
+Unlike systems having only hardware interrupt priorities, the NVIC allows important interrupts to interrupt lower priority handlers; this process, called \textit{nesting}, requires a more complex context-switch mechanism but otherwise works identically to how interrupts pause execution of the main application thread. 
 
-Allowing nested interrupts introduces some complications: some interrupt tasks require uninterrupted processing without losing or corrupting data. An example of this are interrupts which move data between communication peripherals. Many of these have limited buffer space and will overwrite data if the interrupt execution delays or pauses for too long. 
+Allowing nested interrupts introduces some complications: some interrupt tasks require uninterrupted processing without losing or corrupting data (e.g., interrupts which move data between communication peripherals). Many of these have limited buffer space and will overwrite data if the interrupt execution delays or pauses for too long. 
 
-Properly establishing the priorities between interrupts resolves much of the problem. However, in some cases, it may be appropriate to \textit{mask}: temporarily disable other interrupts during critical sections of code. The NVIC has capabilities to mask specific interrupts, and larger relatives such as those in the Cortex M3 devices can mask interrupts by priority level. When the NVIC masks an interrupt, it may still enter the pending state; this allows the NVIC to evaluate and launch the appropriate handlers once the NVIC removes the mask.
+Properly establishing the priorities between interrupts resolves much of the problem; in some cases, however, it may be appropriate to \textit{mask}. Masking temporarily disables other interrupts during critical sections of code. The NVIC has capabilities to mask specific interrupts, and larger relatives such as those in the Cortex M3 devices can mask interrupts by priority level. When the NVIC masks an interrupt, it may still enter the pending state; this allows the NVIC to evaluate and launch the appropriate handlers once the NVIC removes the mask.
 
-\begin{exercise}[Long-Running Interrupts]
+\begin{assignment}[Long-Running Interrupts]
     \label{ex6}
-   Normally you want to keep interrupt handlers as short as possible. However, in some cases this is infeasible. This exercise demonstrates how a long running interrupt impacts the main application loop. 
+   Although in some cases it may be infeasible, normally you want to keep interrupt handlers as short as possible to avoid starving parts of your program. This exercise demonstrates how a long running interrupt impacts the main application loop. 
 
    In this exercise we shall create a long-running interrupt by adding a delay loop to the EXTI handler you wrote earlier. \textbf{Remember, adding delay to an interrupt is typically a bad idea!} 
    \begin{enumerate}
        \item Add a delay loop of roughly 1-2 seconds to the EXTI interrupt handler.
        \begin{itemize}
            \item These exercises will temporarily break the operation of the HAL delay library.
-           \item A count to around 1,500,000 should be enough. 
+           \item A count to 1,500,000 should be sufficient. 
        \end{itemize} 
        \item Add a second LED toggle so that the green and orange LEDs should exchange once before and after the delay loop. 
        \item Compile and load your application onto the Discovery board.
+       \item Pass off this section with a TA.
    \end{enumerate}
    
     \noindent When you press the user button, you should see the red LED stop flashing while the EXTI interrupt hander is in the delay loop. This indicates that the main application has stopped working since the processor is stuck in the long interrupt. 
     
    Although the main application stops whenever the system is in an interrupt handler, the SysTick handler controlling the blue LED should continue to operate normally. This is due to the priority of the SysTick handler being higher than the EXTI and therefore has the ability to interrupt the long running hander. 
-\end{exercise}
+\end{assignment}
   
-\begin{exercise}[Exploring Interrupt Priorities]
+\begin{assignment}[Exploring Interrupt Priorities]
    \label{ex7}  
-   In situations where you have a mix of short and long-running interrupts, you must pay special attention to their priorities. This exercise demonstrates how a long running interrupt can prevent others from executing properly. 
+   In situations where you have a mix of short and long-running interrupts, pay special attention to their priorities. This exercise demonstrates how a long running interrupt can prevent others from executing properly. 
    
     \subsubsection{``Starving'' Interrupts}
     This exercise shows how having poor priority choices can prevent the SysTick handler from operating properly.  
     
     \begin{enumerate}
-        \item The HAL library initializes the SysTick timer to have the highest priority possible (lowest priority number). Add code to your main application that changes the SysTick interrupt priority to 2 (medium priority). 
+        \item The HAL library initializes the SysTick timer to have the highest priority possible (again, lowest numerical priority level). Add code to your main application that changes the SysTick interrupt priority to 2 (medium priority). 
         \begin{itemize}
             \item You will have to look up the defined name for the SysTick interrupt number and pass it to the \texttt{NVIC\_SetPriority()} function.
         \end{itemize} 
@@ -529,7 +554,7 @@ Properly establishing the priorities between interrupts resolves much of the pro
     
     \noindent Watch the SysTick interrupt operate normally and blink the blue LED until the button is pressed and the EXTI external interrupt launches. If you set the priorities as described above, the SysTick interrupt will stop while the external interrupt operates. 
     
-    What is happening in this situation? The answer is that the EXTI interrupt is ``starving'' the SysTick interrupt. Because the EXTI interrupt runs for an extended period of time the only way the SysTick handler can occur is if it can interrupt the EXTI handler. Unfortunately, we changed the SysTick interrupt to have a lower priority than the EXTI, and it is unable to do so.
+    What is happening in this situation? The EXTI interrupt is ``starving'' the SysTick interrupt. Determine why this is happening.
 
     \subsubsection{Fixing with NVIC Priorities}
     
@@ -538,15 +563,29 @@ Properly establishing the priorities between interrupts resolves much of the pro
     \begin{enumerate}
         \item Change the EXTI interrupt to have priority 3. (lowest priority)
         \item Program the board and observe the LEDs, both interrupts should be working properly once more.
+        \item Pass off this section with a TA to show that changing the priorities changes the way the LEDs function.
     \end{enumerate}
     
     In this case, it is trivial to decide on the proper priorities for the two interrupts. However, in real systems the process can become complicated. As a general rule interrupts used for timing need the highest priority, interrupts from communications peripherals need high priority, many others can be set to medium, and anything long-running should be on low. 
     
-    If you must have a long-running, high-priority interrupt you need to be very careful to determine that the others will function properly. Likewise, even the lowest priority interrupts can interrupt the main application thread. If your main thread performs a task, make sure you don't starve it as well. 
+    If you must have a long-running, high-priority interrupt, verify that the others will function properly; similarly, even the lowest priority interrupts interrupt the main application thread. If your main thread performs a task, make sure you don't starve it as well.
     
-    Even with good priority settings, too frequent or too many interrupts can starve parts of your application. In this case, the system remains busy attempting to keep up with the flood of requests. This can cause the lowest priority portions to be perpetually pushed down on the waiting list.
-    
-\end{exercise}
+\end{assignment}
+
+\section{\color{blue}Postlab Questions}\index{Postlab Questions}
+\begin{question}[Postlab 2]
+	Please answer the following questions and hand in as your postlab for Lab 2.
+	% The section locations for each question needs renumbering in respect to the section to which it refers
+	\begin{enumerate}
+		\item Why can't you use both pins PA0 and PC0 for external interrupts at the same time?
+		\item What software priority level gives the highest priority? What level gives the lowest?
+		\item How many bits does the NVIC have reserved in its priority (IPR) registers for each interrupt (including non-implemented bits)?
+		Which bits in the group are implemented?
+		\item What was the latency between pushing the Discovery board button and the LED change (interrupt handler start) that you measured with the logic analyzer?
+		Make sure to include a screenshot in the post-lab submission.
+		\item Why do you need to clear status flag bits in peripherals when servicing their interrupts?
+	\end{enumerate}
+\end{question}
 
 % Setup and enable an interrupt
 %   depends on peripheral
