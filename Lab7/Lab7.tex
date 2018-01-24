@@ -1,6 +1,6 @@
 
 
-\documentclass[11pt,fleqn]{book} % Default font size and left-justified equations
+\documentclass[openany,11pt,fleqn]{book} % Default font size and left-justified equations
 
 \input{structure} % Insert the commands.tex file which contains the majority of the structure behind the template
 \usepackage{float}
@@ -77,7 +77,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%                                                                                         %%%%
-%%%%       Chapter 7:                                                                        %%%%
+%%%%       Chapter 7: Modeling a PID Control System                                          %%%%
 %%%%                                                                                         %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -88,7 +88,7 @@
 \chapterimage{chapter_head_2.png} % Chapter heading image
 \chapter{Modeling a PID Control System}
 
-\setSectionType{Intro}
+%\setSectionType{Intro}
 \section{Control System Basics}
 The purpose of a control system is to direct the behavior of other devices to produce an output state that matches a requested condition. Control systems vary widely in their design and are used in many different applications such as a thermostat for household heating and cruise-control for vehicles.
 
@@ -161,7 +161,7 @@ A derivative controller reacts to the rate of change in the output of the system
 
 The major drawback for derivative controlled systems is that they can amplify minor errors or oscillate in systems with natural fluctuations. Derivative systems are more difficult to tune properly, and depending on the process many systems use only proportional and integral control. 
 
-\setSectionType{Review}
+%\setSectionType{Review}
 \section{Modeling DC Motors}
 
 DC motors when operating steady-state appear mostly as a series resistive-inductive loop with a voltage drop dependent on the current angular velocity. This voltage drop is due to the back-electromotive force or EMF which is generated from the motion of the motor armature relative to the windings. Figure \ref{motor_sys} shows a model of a simple DC motor system. 
@@ -237,7 +237,7 @@ To derive the 1st-order transfer function, follow these steps. Your goal is to c
 
 
 
-\setSectionType{Exercise}
+%\setSectionType{Exercise}
 \section{Lab Assignment: Derivation of a DC Motor Transfer Function}
 The following portions of the exercise create the ``plant'' or motor model used in the simulated control system. You will use your derived transfer functions within the Simulink model created in the second exercise. 
 \begin{enumerate}

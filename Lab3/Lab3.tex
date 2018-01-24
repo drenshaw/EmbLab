@@ -1,6 +1,6 @@
 
 
-\documentclass[11pt,fleqn]{book} % Default font size and left-justified equations
+\documentclass[openany,11pt,fleqn]{book} % Default font size and left-justified equations
 
 \input{structure} % Insert the commands.tex file which contains the majority of the structure behind the template
 \usepackage{float}
@@ -84,30 +84,31 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%                                                                                         %%%%
-%%%%       Chapter 4: Timers, PWM and GPIO Alternate Functions                               %%%%
+%%%%       Chapter 3: Timers, PWM and GPIO Alternate Functions                               %%%%
 %%%%                                                                                         %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\setcounter{chapter}{3} % Manually adjust chapter counter to number before desired chapter heading
+\setcounter{chapter}{2} % Manually adjust chapter counter to number before desired chapter heading
 
 \begin{document}
 	
 \chapterimage{chapter_head_2.png} % Chapter heading image
+%\tableofcontents
 \chapter{Timers, PWM and GPIO Alternate Functions}
 
 \section{Introduction to Timers}
-The last lab used the SysTick timer to generate periodic interrupts. The SysTick is a simple peripheral with a 24-bit down-counting register that decrements every processor clock cycle. Once this counter reaches zero an interrupt is triggered. The primary purpose of the SysTick timer is to generate a stable system ``tick'' or timing reference signal. 
+The last lab used the SysTick timer to generate periodic interrupts. The SysTick is a simple peripheral with a 24-bit down-counting register that decrements every processor clock cycle. Reaching zero on this counter triggers an interrupt. The primary purpose of the SysTick timer is to generate a stable system ``tick'' or timing reference signal. 
 
-This reference signal is used to indicate the passage of a unit of time. Some common places where the SysTick is used is within the HAL delay libraries and in the context switcher of real-time operating systems. 
+We use this reference signal to indicate the passage of a unit of time. Some common places to use the SysTick are within the HAL delay libraries and in the context switcher of real-time operating systems. 
 
-An interesting question to ask is why accurate timing so important. Although a processor moves along the applications code in units of the clock cycle, it is difficult and inefficient to measure time simply by counting instruction cycles without dedicated hardware such as a timer. The requirement for accurate timing stems from the fact that many embedded systems require specific timings or schedules for communications and while interacting with the physical world.
+Why is accurate timing important? Although a processor moves along the applications code in units of the clock cycle, it is difficult and inefficient to measure time simply by counting instruction cycles without dedicated hardware timers. The need for accurate timing stems from the fact that many embedded systems require specific timings or schedules for communications and while interacting with the physical world.
 
-At their core, all timers are simple registers which increment or decrement whenever a trigger signal occurs. Upon this basic functionality is built the capability to generate hardware interrupts, like the SysTick. However, the SysTick is the simplest of the onboard timer peripherals.
+At their core, all timers are simple registers which increment or decrement whenever a trigger signal occurs. It is this basic functionality that we build the capability to generate hardware interrupts like the SysTick; we use the Systick here since it is merely the simplest of the onboard timer peripherals.
     
     \subsection{Systick vs Peripheral Timers}
-     Because the SysTick peripheral has the very simple purpose to generate periodic interrupts, it doesn't offer any features that make it useful for more complicated tasks. 
+     Because the SysTick peripheral has a very simple purpose\textemdash generate periodic interrupts\textemdash it doesn't offer any features that make it useful for more complicated tasks. 
      
-     In contrast, the peripheral timers within the STM32F0 are designed to be useful in whatever tasks the user application requires. Because of this they are relatively complicated devices with a large variety of features. Figure \vref{block_timers} shows the block diagram for general-purpose timers 2 \& 3 in the STM32F072.  
+     In contrast, other peripheral timers within the STM32F0 are very useful in various tasks the user application requires; they are therefore relatively complicated devices with a large variety of features. Figure \ref{block_timers} shows the block diagram for general-purpose timers 2 \& 3 in the STM32F072.  
 
         \begin{figure}[]
             \centering\includegraphics[width=\textwidth]{block_timers}
@@ -133,32 +134,30 @@ At their core, all timers are simple registers which increment or decrement when
         \end{figure}
         
         
-        Figure \vref{avaliable_timers} shows the timers available in the specific chip used in the labs. When deciding on a timer to use for an application, it is helpful to understand their capabilities and if they are suitable for the task. A brief breakdown of the information in figure \vref{avaliable_timers} is as follows:
+        Figure \ref{avaliable_timers} shows the timers available in the specific chip used in the labs. When deciding on a timer to use for an application, it is helpful to understand their capabilities and limits to determine their suitability for the task. A brief breakdown of the information in figure \ref{avaliable_timers} is as follows:
         
         \begin{itemize}
-            \item \textbf{Timer Type} -- There are multiple classes of timers within the STM32F0. These serve as indicators of the appropriate uses for the peripheral. An advanced control timer offers additional and more complex operating modes than a general-purpose one. 
-            \item \textbf{Timer} -- These abbreviated names are used to identify between timers in the documentation. They are also the defined names for the timer structures in the supporting peripheral header files. 
-            \item \textbf{Counter Resolution} -- This indicates how large the hardware counter within the timer is. A 16-bit timer can only count to $2^{16}$ values before overflowing and wrapping back to zero. 
-            \item \textbf{Counter Type} -- Typically the hardware counter in a timer counts upwards with each clock cycle. However, more advanced timers can also be set to count downwards from a value or to change direction whenever reaching the limit values automatically. 
-            \item \textbf{Prescaler Factor} -- The prescale factor allows the timer to pre-divide the input clock to a slower frequency. The timers within the STM32F0 have the ability to divide the input clock by arbitrary integer factors between 1 and $2^{16}$.
-            \item \textbf{DMA Request Generation} -- Many peripherals have the ability to move data between peripheral registers and system memory without using the processor. This process is called Direct Memory Access (DMA).
-            \item \textbf{Capture/Compare Channels} -- Most timers have the ability to modify GPIO pins without using the GPIO peripheral. The capture/compare system in a timer is used to generate and measure digital signals on an external pin. 
+            \item \textbf{Timer Type} -- The STM32F0 has multiple classes of timers; these serve as indicators of the appropriate uses for the peripheral. An advanced control timer offers additional and more complex operating modes than a general-purpose one. 
+            \item \textbf{Timer} -- These abbreviated names identify the timers in the documentation; they are also the defined names for the timer structures in the supporting peripheral header files. 
+            \item \textbf{Counter Resolution} -- This indicates the size of the hardware counter within the timer; e.g., a 16-bit timer can only count to $2^{16}$ values before overflowing and wrapping back to zero. 
+            \item \textbf{Counter Type} -- Typically the hardware counter in a timer counts upwards with each clock cycle; wowever, more advanced timers also can count downwards from a value or to change direction whenever reaching the limit values automatically. 
+            \item \textbf{Prescaler Factor} -- The prescale factor allows the timer to pre-divide the input clock to a slower frequency; the timers within the STM32F0 have the ability to divide the input clock by arbitrary integer factors between 1 and $2^{16}$.
+            \item \textbf{DMA Request Generation} -- Many peripherals have the ability to move data between peripheral registers and system memory without using the processor in a process known as Direct Memory Access (DMA).
+            \item \textbf{Capture/Compare Channels} -- Most timers have the ability to modify GPIO pins without using the GPIO peripheral; the capture/compare system in a timer generates and measures digital signals on an external pin. 
             \item \textbf{Complementary Outputs} -- The capture/compare circuity in some timers can generate complementary or opposing outputs on two GPIO pins. 
         \end{itemize}
 
 \section{Using the Timer Documentation}
-    At this point, the peripherals used in the labs are reaching the level of complexity that the lab manual isn't able to provide enough information to complete the lab assignments without additional reading in the datasheets and peripheral reference manual. 
-    
-    Instead, the lab manuals will attempt to provide an overview of the different modes of operation and their relevant registers within the peripheral.
+    At this point, the peripherals used in the labs are reaching the level of complexity that the lab manual won't provide enough information to complete the lab assignments without the datasheets and manuals. Instead, the lab manuals will attempt to provide an overview of the different modes of operation and their relevant registers within the peripheral; you will need to supplement that information with information within the datasheets.
 
-    Figure \vref{avaliable_timers} introduced the set of available timers and indicated their characteristics. For the remainder of this lab manual, we will be focusing on the documentation materials for TIM2 \& TIM3. 
+    Figure \ref{avaliable_timers} displays the set of available timers and indicated their characteristics. For the remainder of this lab manual, we will focus on the documentation materials for TIM2 \& TIM3. 
     
-    Timers 2 \& 3 are the moderately-advanced versions of the general purpose timers in the STM32F0. Although not as complex as the advanced control timer 1, they feature additional modes and more output channels. Because all the timers in the STM32F0 have a nearly identical interface, by reading through the documentation of the more complex peripherals, you should be able to move to one of the simpler devices without trouble in the assignment if desired. 
+    Timers 2 \& 3 are the moderately-advanced versions of the general purpose timers in the STM32F0. Although not as complex as the advanced control timer 1, they feature additional modes and more output channels. All the timers in the STM32F0 have a nearly identical interface, so reading through the documentation of the more complex peripherals should make interfacing with one of the simpler devices easier. 
     
     \subsubsection{Organization of Peripheral Documentation}
-    Each section of the peripheral reference manual follows a similar organization regardless of the peripheral documented. These begin with a brief introduction of the purpose and features of the peripheral, followed by a block diagram showing the basic architectural design of the hardware. 
+    Each section of the peripheral reference manual follows a similar organization regardless of the peripheral which it discusses; they begin with a brief introduction of the purpose and features of the peripheral, followed by a block diagram showing the basic architectural design of the hardware. 
     
-    Within a peripheral's documentation the section titled \textit{Functional Description} is the most helpful piece of material used when figuring out a new peripheral. The functional description of a peripheral provides the following information:
+    The section titled \textit{Functional Description} is the most helpful piece of material used when figuring out a new peripheral; the functional description of a peripheral provides the following information:
     
     \begin{itemize}
         \item Explanation of the purpose of each operating mode 
@@ -210,7 +209,7 @@ At their core, all timers are simple registers which increment or decrement when
     
     \subsection{Basic Timer Operation}
     
-    There are three different counting modes that a timer can operate under; up, down, and center-aligned (up/down). Figure \vref{count_modes} shows a graphical representation of these counting modes.  
+    There are three different counting modes that a timer can operate under; up, down, and center-aligned (up/down). Figure \ref{count_modes} shows a graphical representation of these counting modes.  
     
     \begin{itemize}
         \item \textbf{Upcounting Mode} --  In upcounting mode, the timer starts at 0 and counts upwards to the auto-reload value in the ARR register. After reaching the ARR limit, the counter resets back to 0. 
@@ -294,7 +293,7 @@ At their core, all timers are simple registers which increment or decrement when
                 \item \textbf{The default processor frequency of the STM32F072 is 8 MHz. Use this value when calculating the timer parameters.}
                 \item A typical approach is to set the timer's base frequency and the target period into the same units. 
                 \begin{itemize}
-                    \item See example \vref{example1} and use the prescaler (PSC) register. 
+                    \item See example \ref{example1} and use the prescaler (PSC) register. 
                 \end{itemize}
                 \item Once the timer and target period are in similar units, set the auto reload register (ARR) to count the number of units to achieve the target. 
                 \begin{itemize}
@@ -329,7 +328,7 @@ At their core, all timers are simple registers which increment or decrement when
 \section{Using Timers to Generate or Measure Signals}
 The basic modes of operation in a timer allow for a very flexible method of generating interrupts by modifying the timer's frequency and top value. However, the timers in the STM32F0 have the additional capability of generating and measuring physical waveforms by directly interfacing with GPIO pins. These features are made possible by the Capture/Compare Unit in the timer. 
 
-When configured in a capture/compare mode, the timer has two additional registers with important functions.  In figure \vref{avaliable_timers} one of the columns indicated how many capture/compare channels were present within each timer. Each capture/compare channel functions independently but has an identical interface with its own set of registers.  
+When configured in a capture/compare mode, the timer has two additional registers with important functions.  In figure \ref{avaliable_timers} one of the columns indicated how many capture/compare channels were present within each timer. Each capture/compare channel functions independently but has an identical interface with its own set of registers.  
 \begin{itemize}
     \item \textbf{Capture/Compare Registers (CCRx)} -- This register holds capture/compare data. Its specific use depends on the selected mode.
     \item \textbf{Capture/Compare Mode Registers (CCMRx)} -- Selects between capture/compare modes and configures their operation.
@@ -347,7 +346,7 @@ The three basic modes that the capture/compare channels can be configured into a
     \subsection{Output Compare Mode}
         The output compare mode directly modifies the output of a GPIO pin whenever the timer's counter matches the value stored in the CCRx register. Depending on the configuration, an output compare channel can set, clear or toggle its pin on a counter match. 
         
-        Using the output compare mode it is possible to create arbitrary digital waveforms on the output. Typically, the ARR register is set to provide a constant period to the timer, and the user's application produces the desired output by modifying the CCRx register while the timer is running. Figure \vref{ocomp_mode} shows an up-counting timer toggling an output compare pin on every match of the CCRx register. 
+        Using the output compare mode it is possible to create arbitrary digital waveforms on the output. Typically, the ARR register is set to provide a constant period to the timer, and the user's application produces the desired output by modifying the CCRx register while the timer is running. Figure \ref{ocomp_mode} shows an up-counting timer toggling an output compare pin on every match of the CCRx register. 
 
         \begin{figure}[]
             \centering\includegraphics[width=0.75\textwidth]{ocomp_mode}
@@ -367,7 +366,7 @@ The three basic modes that the capture/compare channels can be configured into a
     
     Naturally, the concept of PWM does not make sense at low frequencies; it would just appear as a series of different length pulses. However, at high frequencies many physical systems cannot respond quick enough to shut-off or turn-on with each output transition. This is the basis of a mechanical and electrical low-pass filter which averages or smooths out the high-frequency transitions of the PWM signal into an approximated analog voltage.
     
-    PWM is used for a variety of purposes. A few common examples are audio, light dimming, and motor speed control. Figure \vref{pwm_sine} shows how an analog sine-wave is approximated by a digital PWM signal. 
+    PWM is used for a variety of purposes. A few common examples are audio, light dimming, and motor speed control. Figure \ref{pwm_sine} shows how an analog sine-wave is approximated by a digital PWM signal. 
 
     \begin{figure}[]
         \centering\includegraphics[width=0.75\textwidth]{pwm_sine}
@@ -376,7 +375,7 @@ The three basic modes that the capture/compare channels can be configured into a
     \end{figure}
     
     \subsubsection{Operation of Capture/Compare PWM Mode}
-    The PWM mode operates almost exactly as the output compare mode of the timer. The difference is that the output pin state is also changed whenever the timer counter resets to begin a new period. There are different modes of PWM that the capture/compare system can generate. Figure \vref{pwm_pin} demonstrates one of the possible PWM modes. In the mode shown in the figure, the output pin begins the PWM period at a low state and is set high once the timer's counter matches the CCRx register. This output is set low again when the next period starts, and the overall ratio of on/off is set by the location of the CCRx value in comparison to the ARR register. 
+    The PWM mode operates almost exactly as the output compare mode of the timer. The difference is that the output pin state is also changed whenever the timer counter resets to begin a new period. There are different modes of PWM that the capture/compare system can generate. Figure \ref{pwm_pin} demonstrates one of the possible PWM modes. In the mode shown in the figure, the output pin begins the PWM period at a low state and is set high once the timer's counter matches the CCRx register. This output is set low again when the next period starts, and the overall ratio of on/off is set by the location of the CCRx value in comparison to the ARR register. 
    
    The important thing to note about PWM is that the signal has both a duty-cycle and frequency. The frequency of the PWM is set by the timer's frequency and the ARR register. The duty-cycle is set by the ratio of the CCRx and ARR registers. Typically the frequency of the PWM signal is irrelevant to the approximated analog voltage. However, it must remain high enough such that the physical system can't directly respond to the transitions in a PWM period. 
    
@@ -447,7 +446,7 @@ The GPIO alternate function system allows the user to have a few different optio
     
     Open the STM32F072xB datasheet and navigate to Section 4 \textit{Pinouts and Pin Descriptions}. This section provides documentation on all of the chip packages available for the device. It also provides tables with pinout details, including alternate functions.
     
-    Navigate past the package maps until you find Table 13 \textit{STM32F072x8/xB pin definitions}. This table provides pin number to pin name mappings, pin characteristics and limitations, and available alternate functions. Figure \vref{chip_pins} shows an annotated portion of table 13. 
+    Navigate past the package maps until you find Table 13 \textit{STM32F072x8/xB pin definitions}. This table provides pin number to pin name mappings, pin characteristics and limitations, and available alternate functions. Figure \ref{chip_pins} shows an annotated portion of table 13. 
     
     \subsubsection{Physical Pin Numbering}
     Beginning from the left-side of the table, the first set of column headers list the different packages available for the chip. These columns provide the physical pin numbering of the chip for that specific package. The STM32F072xB on the Discovery board we are using has a 64-pin low-quad-flat-pack (LQFP64) chip package; this column has been highlighted in orange. Notice that the lowest two rows do not have a number and are highlighted in red, this indicates that the specific pin on that row does not physically exist in the given package. 
@@ -483,7 +482,7 @@ The GPIO alternate function system allows the user to have a few different optio
         \label{example2}
             This example demonstrates selecting a pin which connects to the fourth capture/compare channel of timer 3. 
             
-            Begin by browsing through the alternate functions column in Table 13 until you find a signal titled ``TIM3\_CH4.'' The names of alternate functions always begin with an abbreviation of their peripheral, followed by a short designator which is indicated somewhere in the functional description. Figure \vref{chip_pins} shows one of the possible pin choices with the desired function circled in blue. Examining the pin information across the row we can see that this pin belongs to GPIOB (circled in green) and is the 27th physical pin on the LQFP64 package used on the Discovery board (circled in orange).
+            Begin by browsing through the alternate functions column in Table 13 until you find a signal titled ``TIM3\_CH4.'' The names of alternate functions always begin with an abbreviation of their peripheral, followed by a short designator which is indicated somewhere in the functional description. Figure \ref{chip_pins} shows one of the possible pin choices with the desired function circled in blue. Examining the pin information across the row we can see that this pin belongs to GPIOB (circled in green) and is the 27th physical pin on the LQFP64 package used on the Discovery board (circled in orange).
         
 %            Example: Chose arbitrary alternate function for a peripheral and walk through the process of finding pins
     \end{example}
@@ -502,7 +501,7 @@ The GPIO alternate function system allows the user to have a few different optio
    	
     \begin{example}[Determining an Alternate Function's Number] 
         \label{example3}
-Figure \vref{func_pins} shows a portion of Table 15 in the pinouts and pin descriptions section of the device datasheet. This table lists the alternate functions for the GPIOB pins of the device. Continuing from the previous example, we can begin by finding the row representing PB1, the pin chosen with the TIM3\_CH4 function found in Table 13. 
+Figure \ref{func_pins} shows a portion of Table 15 in the pinouts and pin descriptions section of the device datasheet. This table lists the alternate functions for the GPIOB pins of the device. Continuing from the previous example, we can begin by finding the row representing PB1, the pin chosen with the TIM3\_CH4 function found in Table 13. 
 
 Looking across the columns of the PB1 row lists the same alternate functions listed in Table 13. The difference in this table is that the column header's indicate an alternate function number. Finding the TIM3\_CH4 (circled in blue), we can look up to the column header and see the alternate function number is ``AF1.'' (circled in red)
 
@@ -535,7 +534,7 @@ By programming the bit pattern for AF1 into the bit region representing PB1 in t
 \end{exercise}    
     
 \begin{exercise}[Measuring PWM Output]
-    In exercise \vref{ex2} you configured channel 1 to \textit{PWM mode 2} and channel 2 to \textit{PWM mode 1}. In this exercise you will be exploring the difference between the two modes and the effect of the CCRx register on the output duty cycle. 
+    In exercise \ref{ex2} you configured channel 1 to \textit{PWM mode 2} and channel 2 to \textit{PWM mode 1}. In this exercise you will be exploring the difference between the two modes and the effect of the CCRx register on the output duty cycle. 
     
     \begin{enumerate}
         \item Connect the Saleae logic analyzer to pins PC6 and PC7, and start a capture with the PWM running.

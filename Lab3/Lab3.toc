@@ -1,0 +1,60 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\defcounter {refsection}{0}\relax 
+\select@language {english}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {3}Timers, PWM and GPIO Alternate Functions}{3}{chapter.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3.1}Introduction to Timers}{3}{section.3.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {3.1.1}Systick vs Peripheral Timers}{3}{subsection.3.1.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {3.1.2}Timers in the STM32F072}{3}{subsection.3.1.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3.2}Using the Timer Documentation}{6}{section.3.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Organization of Peripheral Documentation}{6}{section*.4}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3.3}Using Timers to Generate Interrupts and Events}{6}{section.3.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Timer Counter Register (CNT)}{7}{section*.5}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Timer Prescaler Register (PSC)}{7}{section*.6}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Timer Auto-Reload Register (ARR)}{7}{section*.7}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {3.3.1}Basic Timer Operation}{7}{subsection.3.3.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Basic Timer Interrupts}{7}{section*.9}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Configuring Basic Timer Settings}{7}{section*.10}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {3.3.2}Selecting Timer Frequency and Interrupt Period}{8}{subsection.3.3.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Using the Prescaler}{9}{section*.11}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Calculating Register Values}{9}{section*.12}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3.4}Using Timers to Generate or Measure Signals}{10}{section.3.4}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {3.4.1}Input Capture Mode}{11}{subsection.3.4.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {3.4.2}Output Compare Mode}{11}{subsection.3.4.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {3.4.3}Pulse-Width Modulation (PWM) Mode}{11}{subsection.3.4.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{About Pulse-Width Modulation}{11}{section*.14}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Operation of Capture/Compare PWM Mode}{12}{section*.16}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3.5}Configuring GPIO pins to Alternate Function Mode}{14}{section.3.5}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {3.5.1}Finding Available Pins on a Device Package}{15}{subsection.3.5.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Physical Pin Numbering}{15}{section*.18}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Pin Name and Characteristics}{15}{section*.19}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Alternate and Additional Functions}{15}{section*.20}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {3.5.2}Selecting an Alternate Function}{16}{subsection.3.5.2}
+\contentsfinish 
