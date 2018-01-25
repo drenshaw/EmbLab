@@ -439,7 +439,7 @@ Most peripherals have a status register containing flag bits for pending interru
     Many status registers clear by writing a one to the bit position; others are read-only and must clear through other methods. Some peripherals such as the USART automatically clear some status flags, so clearing the flag manually is unnecessary.
 \end{warning}
 
-\begin{assignment}[Writing the EXTI Interrupt Handler]
+\begin{exercise}[Writing the EXTI Interrupt Handler]
     \label{ex5}
     This is the final step in preparing an interrupt for use. One of the biggest difficulties with using interrupts is the number of steps that you must complete correctly before getting a functioning handler.
     
@@ -457,13 +457,16 @@ Most peripherals have a status register containing flag bits for pending interru
             \item Read the bit description of the pending flags underneath the register map: these bits require a different action to clear them.
         \end{itemize}
         \item Compile and load your application onto the Discovery board.
-        \item Pass off this portion with the TA.
     \end{enumerate}
     
     \noindent If you completed all the previous exercises successfully, the red and blue LEDs should continue to blink while the green and orange LEDs toggle between each other whenever the user button is pressed. 
     
     If the green and orange LEDs do not toggle, check the configuration of the EXTI and NVIC peripherals. If the red LED stops flashing and the green and orange LEDs appear to light up consistently, you are not properly clearing the pending flag in the EXTI, and your application is stuck in the EXTI interrupt handler.
     
+\end{exercise}
+
+\begin{assignment}
+	Please show the TA that your green and orange LEDs toggle using an interrupt. Make sure that your passoff gets recorded on the passoff spreadsheet!
 \end{assignment}
 
 % talk about vector table defining names in startup_stm32f072xb.s
@@ -516,7 +519,7 @@ Allowing nested interrupts introduces some complications: some interrupt tasks r
 
 Properly establishing the priorities between interrupts resolves much of the problem; in some cases, however, it may be appropriate to \textit{mask}. Masking temporarily disables other interrupts during critical sections of code. The NVIC has capabilities to mask specific interrupts, and larger relatives such as those in the Cortex M3 devices can mask interrupts by priority level. When the NVIC masks an interrupt, it may still enter the pending state; this allows the NVIC to evaluate and launch the appropriate handlers once the NVIC removes the mask.
 
-\begin{assignment}[Long-Running Interrupts]
+\begin{exercise}[Long-Running Interrupts]
     \label{ex6}
    Although in some cases it may be infeasible, normally you want to keep interrupt handlers as short as possible to avoid starving parts of your program. This exercise demonstrates how a long running interrupt impacts the main application loop. 
 
@@ -529,15 +532,18 @@ Properly establishing the priorities between interrupts resolves much of the pro
        \end{itemize} 
        \item Add a second LED toggle so that the green and orange LEDs should exchange once before and after the delay loop. 
        \item Compile and load your application onto the Discovery board.
-       \item Pass off this section with a TA.
    \end{enumerate}
    
     \noindent When you press the user button, you should see the red LED stop flashing while the EXTI interrupt hander is in the delay loop. This indicates that the main application has stopped working since the processor is stuck in the long interrupt. 
     
    Although the main application stops whenever the system is in an interrupt handler, the SysTick handler controlling the blue LED should continue to operate normally. This is due to the priority of the SysTick handler being higher than the EXTI and therefore has the ability to interrupt the long running hander. 
+\end{exercise}
+
+\begin{assignment}
+	Please show the TA that your program starves the other functions. Make sure that your passoff gets recorded on the passoff spreadsheet!
 \end{assignment}
   
-\begin{assignment}[Exploring Interrupt Priorities]
+\begin{exercise}[Exploring Interrupt Priorities]
    \label{ex7}  
    In situations where you have a mix of short and long-running interrupts, pay special attention to their priorities. This exercise demonstrates how a long running interrupt can prevent others from executing properly. 
    
@@ -564,13 +570,16 @@ Properly establishing the priorities between interrupts resolves much of the pro
     \begin{enumerate}
         \item Change the EXTI interrupt to have priority 3. (lowest priority)
         \item Program the board and observe the LEDs, both interrupts should be working properly once more.
-        \item Pass off this section with a TA to show that changing the priorities changes the way the LEDs function.
     \end{enumerate}
     
     In this case, it is trivial to decide on the proper priorities for the two interrupts. However, in real systems the process can become complicated. As a general rule interrupts used for timing need the highest priority, interrupts from communications peripherals need high priority, many others can be set to medium, and anything long-running should be on low. 
     
     If you must have a long-running, high-priority interrupt, verify that the others will function properly; similarly, even the lowest priority interrupts interrupt the main application thread. If your main thread performs a task, make sure you don't starve it as well.
     
+\end{exercise}
+
+\begin{assignment}
+	Pass off this section with a TA to show that changing the priorities changes the way the LEDs function. Make sure that your passoff gets recorded on the passoff spreadsheet!
 \end{assignment}
 
 \section{\color{blue}Postlab Questions}\index{Postlab Questions}

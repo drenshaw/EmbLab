@@ -42,7 +42,7 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {1.4.1}The General Purpose Input-Output Peripheral (GPIO)}{22}{subsection.1.4.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{GPIO Port Mode Register (GPIOx\_MODER)}{23}{section*.31}
+\contentsline {subsubsection}{GPIO Port Mode Register (GPIOx\_MODER)}{24}{section*.31}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsubsection}{GPIO port output type register (GPIOx\_OTYPER)}{25}{section*.33}
 \defcounter {refsection}{0}\relax 
@@ -50,11 +50,11 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subsubsection}{GPIO port pull-up/pull-down register (GPIOx\_PUPDR)}{25}{section*.35}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{GPIO port input data register (GPIOx\_IDR)}{25}{section*.36}
+\contentsline {subsubsection}{GPIO port input data register (GPIOx\_IDR)}{26}{section*.36}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{GPIO port output data register (GPIOx\_ODR)}{25}{section*.37}
+\contentsline {subsubsection}{GPIO port output data register (GPIOx\_ODR)}{26}{section*.37}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{GPIO port bit set/reset register (GPIOx\_BSRR)}{25}{section*.38}
+\contentsline {subsubsection}{GPIO port bit set/reset register (GPIOx\_BSRR)}{26}{section*.38}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsubsection}{GPIO port configuration lock register (GPIOx\_LCKR)}{26}{section*.39}
 \defcounter {refsection}{0}\relax 
@@ -62,17 +62,17 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subsubsection}{GPIO port bit reset register (GPIOx\_BRR)}{26}{section*.41}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {1.4.2}Finding Register Definitions in ST's Header Files}{26}{subsection.1.4.2}
+\contentsline {subsection}{\numberline {1.4.2}Finding Register Definitions in ST's Header Files}{27}{subsection.1.4.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Searching the \textit {stm32f072xb.h} File}{27}{section*.43}
+\contentsline {subsubsection}{Searching the \textit {stm32f072xb.h} File}{28}{section*.43}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {1.4.3}Bitwise Operations on Peripheral Registers}{28}{subsection.1.4.3}
+\contentsline {subsection}{\numberline {1.4.3}Bitwise Operations on Peripheral Registers}{29}{subsection.1.4.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Setting bits}{28}{section*.45}
+\contentsline {subsubsection}{Setting bits}{29}{section*.45}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Clearing bits}{28}{section*.46}
+\contentsline {subsubsection}{Clearing bits}{29}{section*.46}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Inverting/Toggling bits}{28}{section*.47}
+\contentsline {subsubsection}{Inverting/Toggling bits}{29}{section*.47}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsubsection}{Building Bitmasks Easily}{29}{section*.48}
 \defcounter {refsection}{0}\relax 
@@ -80,17 +80,17 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {1.4.4}Enabling the System Clock to Device Peripherals}{31}{subsection.1.4.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {1.4.5}Slowing the System Down}{31}{subsection.1.4.5}
+\contentsline {subsection}{\numberline {1.4.5}Slowing the System Down}{32}{subsection.1.4.5}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsubsection}{Delay Loops}{32}{section*.52}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsubsection}{Hardware SysTick Delay}{32}{section*.53}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {1.4.6}\color {orange}Standard Integer Types}{32}{subsection.1.4.6}
+\contentsline {subsection}{\numberline {1.4.6}\color {orange}Standard Integer Types}{33}{subsection.1.4.6}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {1.4.7}``Debouncing'' External Signals}{33}{subsection.1.4.7}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {1.5}\color {blue}Lab Assignment: Writing Basic I/O Code}{33}{section.1.5}
+\contentsline {section}{\numberline {1.5}\color {blue}Lab Assignment: Writing Basic I/O Code}{34}{section.1.5}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {1.5.1}Configuring a GPIO Pin to Output and Blink an LED}{34}{subsection.1.5.1}
 \defcounter {refsection}{0}\relax 

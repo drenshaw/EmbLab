@@ -4,6 +4,7 @@
 
 \input{structure} % Insert the commands.tex file which contains the majority of the structure behind the template
 
+\newcommand\XOR{\char`\^}
 
 \usepackage{listings} 
 \lstset
@@ -406,7 +407,7 @@ Most embedded processors have flexible clock options that allow them to run from
 Within the main function, you will notice some automatically generated comments marking boundaries of user/auto-generated code. STMCube uses these boundaries to locate and preserve the user's code if the user regenerates the project with new settings. You may decide to keep or remove these comments, but we recommend that you manually backup changes to the \textit{main.c} file when regenerating code in STMCube. 
 
 \subsubsection{\color{orange}Blinky Example Code}
-Figure \ref{blinky1} contains a demo program that blinks the green and orange LEDs on the Discovery board. This program (provided in the lab files) functions as a replacement for the \textit{main.c} in your new project. Download this file from the assignment page and replace the \textit{main.c} located in the \textit{src} folder of the project directory. 
+Figure \ref{blinky1} contains a demo program that blinks the green and orange LEDs on the Discovery board. This code functions as a replacement for the \textit{main.c} in your new project. Copy the code into \textit{main.c} located in the \textit{src} folder of the project directory. 
 
 %\colorbox{gray!20!white}{
 %	\centering
@@ -481,7 +482,7 @@ After device initialization, the startup code calls the \texttt{main()} function
 
 \section{\color{orange}Introduction to Device Peripherals}
 
-The last lab section introduced the ``blinky'' example program. (shown in Figure \ref{blinky1}) This simple program repeatedly toggles pins on the STM32F0 using the GPIO hardware abstraction library (HAL) drivers; this example produces a pattern of alternating flashes on the pins used, which connect to LEDs on the STM32F072 Discovery board. 
+The last lab section introduced the ``blinky'' example program (shown in Figure \ref{blinky1}). This simple program repeatedly toggles pins on the STM32F0 using the GPIO hardware abstraction library (HAL) drivers; this example produces a pattern of alternating flashes on the pins used, which connect to LEDs on the STM32F072 Discovery board. 
 
 A closer look at the program structure reveals that it begins by initializing the HAL library and system clock; it then initializes the specific GPIO peripheral controlling the desired pins and enters an infinite \texttt{while} loop. Although many of the function calls in this example program are straightforward and simple to understand, an important question to consider is how the HAL library functions modify the physical peripherals of the STM32F0 device.
 
@@ -521,10 +522,24 @@ Due to this separate development, the processor core contains its own set of per
 
 \subsection{Device Datasheets and Manuals}
 
-Efficiently searching datasheets and manuals is one of the most important skills that an embedded engineer can develop. This trait is important because the sheer amount of information required to understand the operation of many embedded devices completely is staggering. 
-Engineers who can rapidly search for information within device documentation need not memorize operation details; likewise, it becomes easier to work with an unknown device. 
+Searching datasheets and manuals efficiently is one of the most important skills that an embedded engineer can develop\textemdash the sheer amount of information to understand the operation of many embedded devices completely is staggering and can be quite daunting. 
+Engineers who can rapidly find information within device documentation need not memorize operation details; likewise, it becomes easier to work with an unknown device. 
 
-Four files provide the documentation for the exercises in these labs. You may download these from the following links. However, it is always a good idea to know how to find them on a manufacturer's website.
+You may have several datasheets and manuals with which you may be working on a single board. One of these manuals, the board user manual, is board-specific; it contains important information about board's physical layout and what connections go where. You will see that the hardware layout section of the Discovery manual includes which LEDs and buttons connect to which GPIO ports. This will be useful later.
+
+Additionally, we have the chip datasheet for the processor that we use; this contains pinout information, different package information (we're using the LQFP64 package), as well as available protocols and pin definitions. This may contain information about the different packages within the group of processors (STM32F072xB).
+
+We then have access to the programming and core manual, which addresses information on the STM32 Cortex-M0, which is a family that contains our processor. It guides you through the instruction set, core peripherals, and provides all-around general information about the family of processors.
+
+The last that we will cover is the peripheral reference manual. This 1000+ page beast contains information about all the peripherals that \textit{might} be available to use with our processor. This includes descriptions for the registers for those peripherals, which may include clocks, memory, GPIOs, etc.
+
+Each of these documents provides valuable insights and information about the board that we use in lab. You will be referencing all of these documents in the upcoming labs, so get familiar with their layouts and their respective purposes.
+
+\begin{warning}
+	Please note that these manuals and datasheets are not for casual reading; they are references, like a dictionary or encyclopedia. You will \textbf{not} read through them like a novel: you them to look up the information you seek! They may seem daunting, but they become easy to use and are indispensable for embedded systems engineers!
+\end{warning}
+
+The following four files provide the documentation for the exercises in these labs. You may download these from the following links. However, it is always a good idea to know how to find them on a manufacturer's website.
 
 \begin{enumerate}
     \item \href{http://www.st.com/content/ccc/resource/technical/document/datasheet/cd/46/43/83/22/d3/40/c8/DM00090510.pdf/files/DM00090510.pdf/jcr:content/translations/en.DM00090510.pdf}{\textbf{(STM32F072RBT6 Datasheet) DM00090510.pdf}}
@@ -584,7 +599,7 @@ Four files provide the documentation for the exercises in these labs. You may do
 %\end{figure}
 
 
-\subsection{The General Purpose Input-Output Peripheral (GPIO)}
+\subsection{The General Purpose Input-Output Peripheral (GPIO)\label{GPIO_subsection}}
 
 
 The GPIO is one of the most fundamental peripherals within the STM32F0. Although one of the simplest peripherals, it is still surprisingly complex and very powerful.
@@ -1022,9 +1037,7 @@ The benefit of converting a working example is that it becomes possible to compi
 
 \subsection{Configuring a GPIO Pin to Output and Blink an LED}
 
-Your goal in this lab assignment is to recreate the blinking demo using the red and blue LEDs on the Discovery board. 
-
-If beginning with the example ``blinky'' application, the assignment can be broken down into the following steps:
+Recreate the blinking demo using the red and blue LEDs on the Discovery board. If working with the example ``blinky'' application, you may break up the assignment into the following steps:
 
 \subsubsection{Converting the HAL Library Calls to Register Access}
 \begin{enumerate}
@@ -1081,7 +1094,7 @@ If beginning with the example ``blinky'' application, the assignment can be brok
 
 \subsection{Configuring a GPIO Pin to Input and Reading a Button}
 
-Your goal in this portion of the lab assignment is to change your version of the flashing LED program, such that the LEDs toggle on a button press instead of a set delay. This can be broken down into the following steps:
+Change your version of the flashing LED program so that each button press toggles the LEDs instead of the delay.
 
 \begin{enumerate}
     \item Use the \textit{Hardware Layout} section of the Discovery board manual to find the pin connected to the ``USER'' button.
@@ -1135,13 +1148,13 @@ After making these changes to the original application, it is not necessary to h
 		\begin{itemize}
 			\item 0xAD | 0xC7 = ?
 			\item 0xAD \& 0xC7 = ?
-			\item 0xAD \& ~(0xC7) = ?
-			\item 0xAD \^ 0xC7 = ?
+			\item 0xAD \& \texttildelow(0xC7) = ?
+			\item 0xAD \XOR 0xC7 = ?
 		\end{itemize}
 		\item How would you clear the 5th and 6th bits in a register while leaving the other's alone?
 		\item What is the maximum speed the STM32F072R8 GPIO pins can handle in the lowest speed setting?
 		\begin{itemize}
-			\item Use the chip datasheet, lab section 2.4.1 gives a hint to the location. You'll want to search the I/O AC characteristics table. You will also need to view the OSPEEDR settings to find the bit pattern indicating the slowest speed.
+			\item Use the chip datasheet: lab section \ref{GPIO_subsection} gives a hint to the location. You'll want to search the I/O AC characteristics table. You will also need to view the OSPEEDR settings to find the bit pattern indicating the slowest speed.
 		\end{itemize}
 		\item What RCC register would you manipulate to enable the following peripherals: (use the comments next to the bit defines for better peripheral descriptions)
 		\begin{itemize}

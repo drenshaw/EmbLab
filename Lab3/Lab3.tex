@@ -105,6 +105,25 @@ Why is accurate timing important? Although a processor moves along the applicati
 
 At their core, all timers are simple registers which increment or decrement whenever a trigger signal occurs. It is this basic functionality that we build the capability to generate hardware interrupts like the SysTick; we use the Systick here since it is merely the simplest of the onboard timer peripherals.
     
+\section{\color{blue}Prelab Questions}\index{Prelab Questions}
+\begin{question}[Prelab 3]
+	Please answer the following questions and hand in as your prelab for Lab 3.
+	% The section locations for each question needs renumbering in respect to the section to which it refers
+	\begin{enumerate}
+		\item List two things you can learn from a peripheral's functional description in the peripheral reference manual?
+		\item What is the title of the first sub-section in the functional description of timers 2 and 3?
+		\begin{itemize}
+			\item Not mentioned in the lab manual; look it up!
+		\end{itemize}
+		\item What is the purpose of the Prescaler (PSC) register?
+		\item What is the purpose of the Auto-Reload (ARR) register?
+		\item What is the purpose of the Capture/Compare (CCRx) register while the timer is operating in Output Compare mode? 
+		\item What does the duty-cycle of a PWM signal represent?
+		\item What is the purpose of the Alternate Function mode for a GPIO pin? 
+		\item In what document can you find the documentation for what GPIO pins have which alternate functions?
+	\end{enumerate}
+\end{question}
+    
     \subsection{Systick vs Peripheral Timers}
      Because the SysTick peripheral has a very simple purpose\textemdash generate periodic interrupts\textemdash it doesn't offer any features that make it useful for more complicated tasks. 
      
@@ -194,27 +213,27 @@ At their core, all timers are simple registers which increment or decrement when
 %    This manual will document the purpose of the base registers as they are used in each mode
 %        May also indicate groups of control bits that pertain to the configuration or operation 	
 
-\section{Using Timers to Generate Interrupts and Events} \label{timer_interrupts}
+\section{\color{orange}Using Timers to Generate Interrupts and Events} \label{timer_interrupts}
 
     One of the most basic uses of a timer is to generate periodic interrupts. Unlike the SysTick timer which is typically configured once to a specific base unit of time, the peripheral timers are available to use with arbitrary and varying timing periods. Because their input prescaler can divide the input clock by arbitrary integer values, it becomes possible to generate very long timer periods or match strange timing requirements that aren't multiples of the system clock. Section 18.3 \textit{TIM2 and TIM3 Functional Description} of the peripheral reference manual documents the following sections in greater detail. 
     
     Three registers form the core operations of a timer peripheral. 
     \subsubsection{Timer Counter Register (CNT)}
-    The CNT register holds the current value of the counter in the timer. Its size depends on the counter resolution (16/32-bit) indicated in the timer's documentation. Although this register is automatically updated as the timer operates it is possible to read and edit its value manually. The CNT register can be read within the main application loop as a method of counting time or written to modify the timer's operation. 
+    The CNT register holds the current value of the counter in the timer. Its size depends on the counter resolution (16/32-bit) indicated in the timer's documentation. Although this register automatically updates as the timer operates it is possible to read and edit its value manually. Reading from or writing to the value of the CNT register is a useful method of counting time or modifying the timer's operation. 
     \subsubsection{Timer Prescaler Register (PSC)}
-    The PSC register is used to divide the input clock frequency to the timer. Its value is 0-indexed meaning that a value of 0 in the PSC register divides the clock source by 1. (no frequency scaling) Likewise a value of 1 in the PSC register divides the clock source by 2 and causes the timer to count at half the clock frequency. The PSC can divide the input clock by any integer value that fits in its 16-bit width.  
+    The PSC register divides the input clock frequency to the timer. Its value is 0-indexed, meaning that a value of 0 in the PSC register divides the clock source by 1 (no frequency scaling); likewise, a value of 1 in the PSC register divides the clock source by 2 and causes the timer to count at half the clock frequency. The PSC can divide the input clock by any integer value that fits in its 16-bit width.  
     \subsubsection{Timer Auto-Reload Register (ARR)}
-     Although a timer has a physical hardware size to its counter register, it is possible to set a lower top limit. The value in the ARR register is the trigger point where the timer resets and begins to count a new period. The actual behavior of the timer depends on its counting mode and is discussed more in a later section. 
+     Although a timer has a physical hardware size to its counter register, you may set a lower top limit; the value in the ARR register is the trigger point at which the timer resets and begins to count a new period. The actual behavior of the timer depends upon its counting mode. We will discuss this more in a later section. 
 
     
-    \subsection{Basic Timer Operation}
+    \subsection{\color{orange}Basic Timer Operation}
     
-    There are three different counting modes that a timer can operate under; up, down, and center-aligned (up/down). Figure \ref{count_modes} shows a graphical representation of these counting modes.  
+    A timer operates under three different counting modes: up, down, and center-aligned (up/down). Figure \ref{count_modes} shows a graphical representation of each of the counting modes.  
     
     \begin{itemize}
-        \item \textbf{Upcounting Mode} --  In upcounting mode, the timer starts at 0 and counts upwards to the auto-reload value in the ARR register. After reaching the ARR limit, the counter resets back to 0. 
-        \item \textbf{Downcounting Mode} -- In downcounting mode, the timer starts at the auto-reload value and counts downwards until reaching 0. After reaching zero, it resets back to the ARR value.
-        \item \textbf{Center-aligned Mode (up/down counting)} -- In center-aligned mode, the timer starts by counting upward from 0 until the auto-reload value. Once the upper limit is reached, the counting direction reverses, and the timer counts downwards towards zero.
+        \item \textbf{Upcounting Mode} --  Starting at 0, the timer counts upwards to the auto-reload value in the ARR register, after which the counter resets back to 0 and begins counting anew. 
+        \item \textbf{Downcounting Mode} -- The timer starts at the auto-reload value and counts downwards until reaching 0; it resets back to the ARR value when it reaches 0.
+        \item \textbf{Center-aligned Mode (up/down counting)} -- The timer starts by counting upward from 0 until it reaches the auto-reload value, at which point the counting direction reverses and counts downwards towards zero. The process repeats again by counting upward.
     \end{itemize}
 
     \begin{figure}[]
@@ -225,41 +244,41 @@ At their core, all timers are simple registers which increment or decrement when
 
     \subsubsection{Basic Timer Interrupts}
     
-    Regardless of the counting mode used, whenever the timer reaches a limit and is reset to a new value is called an \textit{Update Event} (UEV). Additionally, center-aligned counters can be configured to trigger update events whenever the timer changes to a specific direction. 
+    Regardless of the counting mode, an \textit{Update Event} (UEV) signals when the timer reaches a limit and resets to a new value. Additionally, center-aligned counters can trigger update events whenever the timer changes to a specific direction. 
     
-    The UEV is one of the possible interrupt sources in a peripheral timer. Typically this source is used to generate periodic interrupts, but with a very flexible and potentially long duration period.
+    The UEV is one possible interrupt source in a peripheral timer; typically this source generates periodic interrupts, but with a very flexible and potentially long duration period.
     
     \subsubsection{Configuring Basic Timer Settings}
-    In addition to the three main timer registers, there are four control registers used to set timer parameters. These are used to enable the timer, set the counting direction, enable the UEV interrupt, and clear the pending interrupt flag in a handler. 
+    In addition to the three main timer registers, we have four control registers to set timer parameters; these enable the timer, set the counting direction, enable the UEV interrupt, and clear the pending interrupt flag in a handler. 
     
     \begin{itemize}
-        \item \textbf{Control Registers 1 \& 2 (CR1 \& CR2)} -- These hold the primary configuration options of the timer. For example, before the timer can operate it must be enabled using the \textit{Counter Enable} (CEN) bit. 
+        \item \textbf{Control Registers 1 \& 2 (CR1 \& CR2)} -- These hold the primary configuration options of the timer; for example, before the timer can operate we must enable it using the \textit{Counter Enable} (CEN) bit. 
         \item\textbf{DMA/Interrupt Enable Register (DIER)} -- Controls the possible interrupt sources in the timer.
-        \item\textbf{Status Register (SR)} -- Contains pending flags that must be cleared in interrupt handlers.
+        \item\textbf{Status Register (SR)} -- Contains pending flags that interrupt handlers must clear.
     \end{itemize}
 
-    \subsection{Selecting Timer Frequency and Interrupt Period}	
-    The peripheral timers in the STM32F0 have the ability to use a few different sources for their clock input. 
+    \subsection{\color{orange}Selecting Timer Frequency and Interrupt Period}	
+    The peripheral timers in the STM32F0 may use a several different sources for their clock input. 
     \begin{itemize}
-        \item\textbf{Internal Peripheral Clock} -- This is the most commonly used clock source and is determined by the clock distribution system. In our toolchain, this frequency is configured by default to be 8Mhz by the STMCubeMX program during project generation. 
-        \item\textbf{External Clock Pin} -- Many timers have the ability to use an external clock source provided by an input pin. This source may have a unique frequency or higher accuracy than the processor clock.
-        \item\textbf{Internal Trigger Inputs} -- Some peripherals can generate trigger events that are visible throughout the device. This mode is used to chain timers together or counting events produced by other types of peripherals.
+        \item\textbf{Internal Peripheral Clock} -- This is the most common clock source and is determined by the clock distribution system. In our toolchain, the STMCubeMX program sets this frequency to 8Mhz by default. 
+        \item\textbf{External Clock Pin} -- Many timers have the ability to use an external clock source provided by an input pin; this source may have a unique frequency or higher accuracy than the processor clock.
+        \item\textbf{Internal Trigger Inputs} -- Some peripherals can generate trigger events that are visible throughout the device; this mode can chain timers together or count events produced by other types of peripherals.
     \end{itemize}
  
  
     \subsubsection{Using the Prescaler}
       
-        The primary purpose of the timer prescaler is to determine the base unit of time that a single ``tick'' or count within the actual timer represents. Consider a timer operating at 8Mhz, at this frequency the period between each update of the timer's value would be one-eighth of a micro-second or 125ns. While it is possible to use this unit of time as a basis for counting longer periods, it may not be convenient. 
+        The primary purpose of the timer prescaler is to determine the base unit of time that a single ``tick'' represents. Consider a timer operating at 8Mhz: the period between each update of the timer's value would be one-eighth of a micro-second, or 125ns. While you could use this unit of time as a basis for counting longer periods, it may not be convenient. 
         
-        The prescaler allows us to convert the input clock frequency into more practical units. For example, if we wanted to count something with a duration in milliseconds, it would be reasonable to divide the input 8Mhz clock by a factor of 8000, giving us a base unit of 1ms between each timer count. 
+        The prescaler allows us to convert the input clock frequency into more practical units. For example, if we wanted to count something with a duration in milliseconds, the prescaler could divide the input 8 Mhz clock by a factor of 8000, resulting in a base unit of 1 ms between each timer count. 
         
-        Within the timer hardware, the value of the prescaler register (PSC) is 0-indexed. This means that the value written to the PSC register should always be one less than the desired prescaler value. Conveniently this also means that the default value of 0 in the PSC register divides by 1, performing no frequency division.  
+        Within the timer hardware, the value of the prescaler register (PSC) is 0-indexed, meaning that the value written to the PSC register should always be one less than the desired prescaler value; consequently, the default value of 0 in the PSC register divides by 1, performing no frequency division.  
 
     \subsubsection{Calculating Register Values}
-        Using both the prescaler and auto-reload register makes configuring a timer to have a specific period trivial. First, consider the unit of time that your desired period is in, and use the prescaler to convert the timer's base unit to either the same or a convenient multiple/divisor. Afterward, use the auto-reload register to count the desired number of time units to make the target period. 
+        Using both the prescaler and auto-reload register makes configuring a timer to a specific period trivial. First, determine the unit of time of your desired period, and use the prescaler to convert the timer's base unit to either the same or a convenient multiple/divisor. Then use the auto-reload register to count the desired number of time units to make the target period. 
         
-        If you are attempting to generate a very long period, you may have to use larger or more granular base units because the physical size of the timer may not be sufficient to count that high at finer resolutions. However, in many cases, it is possible to use small prescaler values to have finer granularity when counting.
-        The following equations may be helpful when selecting prescaler and auto-reload values from a target period or frequency. 
+        If you attempt to generate a very long period, you may have to use larger or more granular base units because the hardware size of the timer may be insufficient to attain the counter value; in many cases, however, we may use small prescaler values to achieve finer resolution when counting.
+        The following equations may be helpful when selecting prescaler and auto-reload values from a target period or frequency:
         
         %\begin{displaymath}
         \begin{align*}
@@ -274,30 +293,30 @@ At their core, all timers are simple registers which increment or decrement when
                 \label{example1}
             For this example, we will set a timer to produce an interrupt at 20Hz assuming that the timer's input clock is 8Mhz. \\
             
-            A target frequency of 20Hz gives a 50ms period. To achieve this, we can divide the 8Mhz clock by 8000 to reduce our timer's frequency to 1kHz. Counting at 1 kHz gives us 1 ms per timer count, so we need 50 counts to reach our target period. We can get our desired interrupt by setting the PSC to 7999, the ARR to 50, and enabling the UEV interrupt in the control registers.  
+            A target frequency of 20Hz results in a 50ms period; we then divide the 8Mhz clock by 8000 to reduce our timer's frequency to 1kHz. Counting at 1 kHz gives us 1 ms per timer count, so we need 50 counts to reach our target period. We can achieve our timing scheme by setting the PSC to 7999, the ARR to 50, and enabling the UEV interrupt in the control registers.  
             \end{example}
         \end{center}
         
     \begin{exercise}[Using Timer Interrupts]
         \label{ex1}
         
-        In this exercise, you'll set up a timer such that the update event (UEV) triggers an interrupt at a specific period. Timer peripherals allow for greater flexibility in choosing an interrupt period over manually counting in the SysTick handler. To complete this exercise, you will need to carefully read through the control register maps in the peripheral reference manual to determine the proper option bits to set. 
+        In this exercise, you'll set up a timer such that the update event (UEV) triggers an interrupt at a specific period. Timer peripherals allow for greater flexibility in choosing an interrupt period over manually counting in the SysTick handler. To complete this exercise, carefully review the control register maps in the peripheral reference manual to determine the proper option bits to set and reset. 
         
         \begin{enumerate}
             \item Enable the timer 2 peripheral (TIM2) in the RCC.
             \begin{itemize}
-                \item This lab will use timers 2 and 3. While all of the timer peripherals can produce interrupts, their configuration registers often have slight differences. 
+                \item This lab will use timers 2 and 3; while all of the timer peripherals can produce interrupts, their configuration registers often have slight differences. 
             \end{itemize}
-            \item Configure the timer such that its update event (UEV) occurs at 4 Hz.
+            \item Configure the timer to trigger an update event (UEV) at 4 Hz.
             \begin{itemize}
                 \item \textbf{The default processor frequency of the STM32F072 is 8 MHz. Use this value when calculating the timer parameters.}
                 \item A typical approach is to set the timer's base frequency and the target period into the same units. 
                 \begin{itemize}
-                    \item See example \ref{example1} and use the prescaler (PSC) register. 
+                    \item See example \ref{example1}, and use the prescaler (PSC) register. 
                 \end{itemize}
-                \item Once the timer and target period are in similar units, set the auto reload register (ARR) to count the number of units to achieve the target. 
+                \item Once the timer and target period are in similar units, set the auto reload register (ARR) to count the number of units to reach the target. 
                 \begin{itemize}
-                    \item Pay attention to the bit-size of the timer. For example, a 16-bit timer can only count up to 65535. If your target ARR is outside of that range, you'll need to adjust the prescaler (change units) to scale the ARR required. 
+                    \item Pay attention to the size (in bits) of the timer. For example, a 16-bit timer can only count up to 65535. If your target ARR is outside of that range, you'll need to adjust the prescaler (change units) to scale the ARR appropriately. 
                 \end{itemize}
             \end{itemize}    
             \item Configure the timer to generate an interrupt on the UEV event.     
@@ -306,19 +325,19 @@ At their core, all timers are simple registers which increment or decrement when
                 \end{itemize}
              \item Configure and enable/start the timer
              \begin{itemize}
-                 \item Although the timer's clock source has been enabled in the RCC, the timer has its own enable/start bit in the control registers. 
-                 \item Note that you should not enable a timer until you've finished setting all the basic parameters and options. (\underline{Not} referring to the RCC enable, always enable the peripheral clock in the RCC first!)
+                 \item Although the RCC enabled the timer's clock source, the timer has its own enable/start bit in the control registers. 
+                 \item Note that you should not enable a timer until you've finished setting all the basic parameters and options. This is different than the RCC enable, which you should always enable first!)
              \end{itemize}
              \item Set up the timer's interrupt handler, and enable in the NVIC.
              \begin{itemize}
-                \item The timer will only have a single generic interrupt reserved for it in the vector table. (not a specific interrupt about the UEV) 
-                \item Look for an interrupt named after the timer you are using. 
+                \item The timer will only have a single generic interrupt reserved in the vector table (not a specific interrupt about the UEV). 
+                \item Look for an interrupt containing the name of the timer you are using. 
             \end{itemize}
             \item Toggle between the green (PC8) and orange (PC9) LEDs in the interrupt handler. 
             \begin{itemize}
                 \item Remember to initialize the LED GPIO pins in your main function. 
                 \item To get the alternating flash pattern, set one of the LEDs active in the GPIO initialization.
-                \item Don't forget to clear the update interrupt pending flag in the status register of the timer peripheral. 
+                \item Don't forget to clear the pending flag for the update interrupt in the status register. 
             \end{itemize}
             \item Compile and load the application onto the Discovery board.
         \end{enumerate}
@@ -326,27 +345,27 @@ At their core, all timers are simple registers which increment or decrement when
     \end{exercise}
 
 \section{Using Timers to Generate or Measure Signals}
-The basic modes of operation in a timer allow for a very flexible method of generating interrupts by modifying the timer's frequency and top value. However, the timers in the STM32F0 have the additional capability of generating and measuring physical waveforms by directly interfacing with GPIO pins. These features are made possible by the Capture/Compare Unit in the timer. 
+The basic operation modes of a timer allow for a very flexible method of generating interrupts by modifying the timer's frequency and top value. However, the timers in the STM32F0 are also capable of generating and measuring physical waveforms by directly interfacing with GPIO pins; these features are possible with the Capture/Compare Unit in the timer. 
 
-When configured in a capture/compare mode, the timer has two additional registers with important functions.  In figure \ref{avaliable_timers} one of the columns indicated how many capture/compare channels were present within each timer. Each capture/compare channel functions independently but has an identical interface with its own set of registers.  
+The timer has two additional registers capture/compare mode; figure \ref{avaliable_timers} indicated how many capture/compare channels are available within each timer. Each capture/compare channel functions independently, but they share identical interfaces within the timer.  
 \begin{itemize}
-    \item \textbf{Capture/Compare Registers (CCRx)} -- This register holds capture/compare data. Its specific use depends on the selected mode.
-    \item \textbf{Capture/Compare Mode Registers (CCMRx)} -- Selects between capture/compare modes and configures their operation.
+    \item \textbf{Capture/Compare Registers (CCRx)} -- This register holds capture/compare data; its specific use depends on the selected mode.
+    \item \textbf{Capture/Compare Mode Registers (CCMRx)} -- Selects between capture and compare modes, and configures their operation.
     \item \textbf{Capture/Compare Enable Register (CCER)} -- Enables/disables the capture/compare channel outputs.
 \end{itemize}
 
-The three basic modes that the capture/compare channels can be configured into are input capture mode, output compare mode, and pulse-width modulation mode. Although these modes are primarily intended to interface with their associated GPIO pins, they can generate interrupts on their respective trigger conditions. 			
+The three basic modes for the capture/compare channels are input capture mode, output compare mode, and pulse-width modulation (PWM) mode. Although these modes are primarily for interfacing with their associated GPIO pins, they can generate interrupts on their respective trigger conditions. 			
     
     \subsection{Input Capture Mode}
-    When configured into input capture mode, a capture/compare channel latches the current value of the timer's counter into the appropriate CCRx register whenever a connected external GPIO pin changes. This mode allows very accurate measurement of the time elapsed between changes on the pin. 
+    Input capture mode latches the current value of the timer's counter into the appropriate CCRx register whenever its connected GPIO pin state changes; this mode allows very accurate measurements of elapsed time between changes on that pin. 
     
-    Similar to the EXTI, the input capture hardware can be set to trigger on either the rising or falling edges of a signal. However, the input capture system has a configurable digital filter which can be used to remove glitches and other noise from the signal. The primary purpose of the input capture mode is to measure precise timing-based signals such as those from a single-wire serial bus or a motor encoder.  
+    Similar to the EXTI, the input capture hardware can trigger on either the rising or falling edges of a signal; the input capture system, however, has a configurable digital filter to remove glitches and other noise from the signal. The primary purpose of the input capture mode is to measure precise timing-based signals such as those from a single-wire serial bus or a motor encoder.  
 
     
     \subsection{Output Compare Mode}
-        The output compare mode directly modifies the output of a GPIO pin whenever the timer's counter matches the value stored in the CCRx register. Depending on the configuration, an output compare channel can set, clear or toggle its pin on a counter match. 
+        The output compare mode modifies the output of a GPIO pin whenever the timer's counter matches the value stored in the CCRx register. Depending on the configuration, an output compare channel can set, clear, or toggle its pin on a counter match. 
         
-        Using the output compare mode it is possible to create arbitrary digital waveforms on the output. Typically, the ARR register is set to provide a constant period to the timer, and the user's application produces the desired output by modifying the CCRx register while the timer is running. Figure \ref{ocomp_mode} shows an up-counting timer toggling an output compare pin on every match of the CCRx register. 
+        The output compare mode can create arbitrary digital waveforms on the output; generally the ARR register is set to provide a constant period to the timer, and the user's application produces the desired output by modifying the CCRx register while the timer is running. Figure \ref{ocomp_mode} shows an up-counting timer toggling an output compare pin on every match of the CCRx register. 
 
         \begin{figure}[]
             \centering\includegraphics[width=0.75\textwidth]{ocomp_mode}
@@ -357,16 +376,16 @@ The three basic modes that the capture/compare channels can be configured into a
 %        The capture compare mode register can be changed on-the-fly, moving the event point. This is often used in PWM mode.
     
     \subsection{Pulse-Width Modulation (PWM) Mode}
-    The pulse-width modulation mode of the capture/compare system is a more advanced form of output compare. Although pulse-width modulation (PWM) is simple once understood, it can be confusing at first. 
+    The pulse-width modulation mode of the capture/compare system is a more advanced form of output compare; although pulse-width modulation (PWM) is ultimately a simple concept, it can be confusing at first. 
     
-    \subsubsection{About Pulse-Width Modulation}
-    PWM is a method of approximating an analog signal using only digital hardware. It operates by using a high-frequency rectangular-wave signal where every period is a ratio of on and off time. This ratio of on/off timing is known as the \textit{duty-cycle} and represents an analog voltage ranging between the low and high voltages of the digital signal. 
+    \subsubsection{\color{orange}About Pulse-Width Modulation}
+    PWM is a method of approximating an analog signal using only digital hardware; it operates by using a high-frequency rectangular-wave signal where every period is a ratio of on and off time, known as the \textit{duty-cycle}, and represents an analog voltage ranging between the low and high voltages of the digital signal. 
     
-    For example, a period of the rectangular wave with a 50\% duty cycle would spend half the period at the high (on) output voltage and the other half at the low (off). A period with 0\% duty cycle remains low for the entire duration, and one with a 100\% duty cycle remains high. It is possible to see how the duty cycle of a PWM signal represents an analog voltage by considering what the average voltage of the digital signal was over the entire period. A digital waveform that was high (on) for half the time and off for the rest would average to one-half the original voltage.  
+    For example, a period of the rectangular wave with a 50\% duty cycle would spend half the period at the high (on) output voltage and the other half at the low (off). A period with 0\% duty cycle remains low for the entire duration, and one with a 100\% duty cycle remains high. Let's see how the duty cycle of a PWM signal represents an analog voltage by considering the average voltage of the digital signal over the entire period. A digital waveform that was high (on) for half of the cycle and low (off) for the other half would average to one-half of the original voltage.  
     
-    Naturally, the concept of PWM does not make sense at low frequencies; it would just appear as a series of different length pulses. However, at high frequencies many physical systems cannot respond quick enough to shut-off or turn-on with each output transition. This is the basis of a mechanical and electrical low-pass filter which averages or smooths out the high-frequency transitions of the PWM signal into an approximated analog voltage.
+    Naturally, the concept of PWM does not make sense at low frequencies; it would just appear as a series of pulses; at high frequencies, however, many physical systems cannot respond quickly enough to shut-off or turn-on with each output transition. This is the basis of a mechanical and electrical low-pass filter which averages or smooths out the high-frequency transitions of the PWM signal into an approximated analog voltage.
     
-    PWM is used for a variety of purposes. A few common examples are audio, light dimming, and motor speed control. Figure \ref{pwm_sine} shows how an analog sine-wave is approximated by a digital PWM signal. 
+    PWM has a wide range of uses; some common implementations are in audio, light dimming, and motor speed control. Figure \ref{pwm_sine} shows how a digital PWM signal approximates an analog sine-wave. 
 
     \begin{figure}[]
         \centering\includegraphics[width=0.75\textwidth]{pwm_sine}
@@ -375,33 +394,33 @@ The three basic modes that the capture/compare channels can be configured into a
     \end{figure}
     
     \subsubsection{Operation of Capture/Compare PWM Mode}
-    The PWM mode operates almost exactly as the output compare mode of the timer. The difference is that the output pin state is also changed whenever the timer counter resets to begin a new period. There are different modes of PWM that the capture/compare system can generate. Figure \ref{pwm_pin} demonstrates one of the possible PWM modes. In the mode shown in the figure, the output pin begins the PWM period at a low state and is set high once the timer's counter matches the CCRx register. This output is set low again when the next period starts, and the overall ratio of on/off is set by the location of the CCRx value in comparison to the ARR register. 
+    The PWM mode operates almost exactly as the output compare mode of the timer; the difference is that the output pin state also changes whenever the timer counter resets to begin a new period. There are different modes of PWM that the capture/compare system can generate: figure \ref{pwm_pin} demonstrates one of the possible PWM modes. In the mode from figure \ref{pwm_pin}, the output pin begins the PWM period at a low state and goes high once the timer's counter matches the CCRx register; this output resets to low again when the next period starts. The location of the CCRx value relative to the ARR register value determines the overall ratio of on/off (duty cycle). 
    
-   The important thing to note about PWM is that the signal has both a duty-cycle and frequency. The frequency of the PWM is set by the timer's frequency and the ARR register. The duty-cycle is set by the ratio of the CCRx and ARR registers. Typically the frequency of the PWM signal is irrelevant to the approximated analog voltage. However, it must remain high enough such that the physical system can't directly respond to the transitions in a PWM period. 
+   The important thing to note about PWM is that the signal has both a duty-cycle \textit{and} frequency: the timer's frequency and the ARR register determine the frequency of the PWM, and the ratio of the CCRx and ARR registers sets the duty cycle. The frequency of the PWM signal generally is irrelevant to the approximated analog voltage, but it must remain sufficiently high so that the physical system can't directly respond to the transitions in a PWM period. 
    
 
 
 
 \begin{exercise}[Configuring Timer Channels to PWM Mode]
     \label{ex2}
-    In this exercise you will set up PWM output to dim LEDs on the Discovery board. By changing the duty-cycle of the generated waveform you can directly control the apparent brightness of the LED. For this exercise you will be using capture/compare channels 1 \& 2 of timer 3. 
+    This exercise sets up a PWM output to dim the LEDs on the Discovery board: changing the waveform's duty cycle controls the apparent brightness of the LED. For this exercise you will be using capture/compare channels 1 \& 2 of timer 3. 
     
     \begin{enumerate}
         \item Enable the timer 3 peripheral (TIM3) in the RCC.
-        \item The period of the PWM signal is determined by the timer's update period. Configure the timer to have a UEV period of 800 Hz.  
+        \item The timer's update period determines the period of the PWM signal; configure the timer to a UEV period related to 800 Hz (T = 1/f).  
         \begin{itemize}
             \item Follow the previous exercise as a template, but do not enable/start the timer.
-            \item Set the prescaler such that you have a reasonable range of counter values between zero and the top limit. Otherwise your timer will be too granular to be able to make fine adjustments to the duty-cycle of the PWM.
-            \item Do not enable the update interrupt or set up the handler, we will not be using interrupts.
+            \item Set the prescaler to a reasonable range of counter values between zero and the top limit; otherwise your timer will be too granular to be able to make fine adjustments to the duty-cycle of the PWM.
+            \item Do not enable the update interrupt or set up the handler: we will not be using interrupts for this part.
         \end{itemize}
         \item Use the Capture/Compare Mode Register 1 (CCMR1) register to configure the output channels to PWM mode.
         \begin{enumerate}
-            \item Channels 1 \& 2 are configured by the CCMR1 register, channels 3 \& 4 by the CCMR2 register.
-            \item Examine the bit definitions for the CC1S[1:0] and CC2S[1:0] bit fields. Ensure that the channels are set to output type. 
-            \item Examine the bit definitions for the OC1M[2:0] bit field. Set output channel 1 to \textit{PWM Mode 2}.
+            \item The CCMR1 register configures channels 1 \& 2, and the CCMR2 register for channels 3 \& 4.
+            \item Examine the bit definitions for the CC1S[1:0] and CC2S[1:0] bit fields; ensure that you set the channels to output. 
+            \item Examine the bit definitions for the OC1M[2:0] bit field; set output channel 1 to \textit{PWM Mode 2}.
             \item Use the OC1M[2:0] bit field to set channel 2 to \textit{PWM Mode 1}.
             \begin{itemize}
-                \item The OC2M bits operate identically to the OC1M and are not documented separately. 
+                \item The OC2M bits operate identically to the OC1M and so have the same documentation. 
                 \item You will see the difference between the different PWM modes in a later exercise.
             \end{itemize}
             \item Enable the output compare preload for both channels.
@@ -409,9 +428,9 @@ The three basic modes that the capture/compare channels can be configured into a
         \item Set the output enable bits for channels 1 \& 2 in the CCER register.
         \item Set the capture/compare registers (CCRx) for both channels to 20\% of your ARR value.
     \end{enumerate}
-\noindent The previous sections mention that the frequency of a PWM signal isn't nearly as important as the duty-cycle, provided that the frequency is high enough that the system can't directly respond to the on-off periods. This is true when dimming LEDs, although the lower-limit isn't how fast the LED can respond to the electrical signal, but how fast the human eye can distinguish separate blinks.
+\noindent The previous sections mention that the frequency of a PWM signal isn't nearly as important as the duty-cycle, provided that the frequency is high enough; this is true for dimming LEDs, although the lower-limit isn't how fast the LED can respond to the electrical signal, but how fast the human eye can distinguish separate blinks.
 
-When both the light and viewer are stationary, the human eye has difficulty seeing the blinking transitions past 70 Hz. However, many people can see noticeable flicker in moving lights even above 500 Hz. Because of this, you'll be using 800 Hz as the base frequency for the PWM. 
+When both the light and viewer are stationary, the human eye has difficulty seeing the blinking transitions past 70 Hz; many people, however, may see noticeable flicker in moving lights even above 500 Hz. You'll therefore be using 800 Hz as the base frequency for the PWM. 
 
 \end{exercise}
 
@@ -423,12 +442,12 @@ When both the light and viewer are stationary, the human eye has difficulty seei
 
 \section{Configuring GPIO pins to Alternate Function Mode} \label{alternate_mode}
 
-In normal operating conditions each GPIO peripheral controls the output state of its pins. Because of this, how does another peripheral such as a timer modify a pin's state? The answer lies within one of the four available pin modes in the GPIO MODER register. In the first lab we used the Input and Output modes of a GPIO pin. However there are two others that we haven't yet discussed. These are the Analog and Alternate Function modes. Allowing a pin to connect directly to internal peripherals of the STM32F0 is the purpose of the alternate function mode. 
+If each GPIO peripheral controls the output state of its pins in normal operating conditions, how does another peripheral such as a timer modify a pin's state? The answer lies within one of the four available pin modes in the GPIO MODER register. In the first lab we used the Input and Output modes of a GPIO pin; two others are available that we haven't yet discussed: these are the Analog and Alternate Function modes. Allowing a pin to connect directly to internal peripherals of the STM32F0 is the purpose of the alternate function mode. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Unlike the EXTI which has the SYSCFG multiplexers, peripherals such as the timers do not have access to arbitrary pins. Instead, the peripheral's internal signals are hardwired only to a handful of pins scattered around the chip. 
+Unlike the EXTI which has the SYSCFG multiplexers, peripherals such as the timers do not have access to arbitrary pins; instead, the peripheral's internal signals have hardwire connections to only a handful of pins scattered around the chip. 
 
-The GPIO alternate function system allows the user to have a few different options when selecting pins for a peripheral. Because there are a large number of possible peripheral signals in relation to the number of pins, many pins have multiple alternate functions shared across multiple peripherals. Although a pin may have multiple functions, only a single one can be selected at a time. When using many peripherals in an application you may need to carefully plan the pins used to ensure that all of them can reach one of their limited output pins.  
+The GPIO alternate function system affords the user different options when selecting pins for a peripheral. Due to the large number of possible peripheral signals in relation to the number of pins, many pins have multiple alternate functions that they connect across multiple peripherals. Although a pin may have multiple functions, it may only control on at a time. Using many peripherals may require carefully planning which pins to use to ensure that all of them can reach one of their limited output pins.  
 
 %    What is Alternate Function Mode?
 %    Need to tell the GPIO hardware to allow the timer to directly control the pin output state
@@ -515,6 +534,8 @@ By programming the bit pattern for AF1 into the bit region representing PB1 in t
     \label{func_pins}
 \end{figure}
     
+\section{\color{blue}Lab Assignment}
+    
 \begin{exercise}[Configuring Pin Alternate Functions] 
     All four of the LEDs on the Discovery board connect to timer capture/compare channels. This enables us to control their apparent brightness using PWM. In the previous exercise you used two of the LEDs in timer 2's interrupt. For this portion of the lab, you'll use the remaining two. 
     
@@ -533,6 +554,10 @@ By programming the bit pattern for AF1 into the bit region representing PB1 in t
     \end{enumerate} 
 \end{exercise}    
     
+\begin{assignment}
+	Please show the TA that your red and blue LEDs dim and brighten according to the duty cycle. Make sure that your passoff gets recorded on the passoff spreadsheet!
+\end{assignment}
+    
 \begin{exercise}[Measuring PWM Output]
     In exercise \ref{ex2} you configured channel 1 to \textit{PWM mode 2} and channel 2 to \textit{PWM mode 1}. In this exercise you will be exploring the difference between the two modes and the effect of the CCRx register on the output duty cycle. 
     
@@ -547,6 +572,33 @@ By programming the bit pattern for AF1 into the bit region representing PB1 in t
     \end{enumerate}
     
 \end{exercise}
+
+\begin{assignment}
+	Please show the TA your logic analyzer output and effect of the duty cycle on your PWM waveform. Make sure that your passoff gets recorded on the passoff spreadsheet!
+\end{assignment}
+
+
+\section{\color{blue}Postlab Questions}\index{Postlab Questions}
+\begin{question}[Postlab 3]
+	Please answer the following questions and hand in as your postlab for Lab 3.
+	% The section locations for each question needs renumbering in respect to the section to which it refers
+	\begin{enumerate}
+		\item Using a timer clock source of 8 MHz, calculate PSC and ARR values to get a 60 Hz interrupt.
+		\begin{itemize}
+			\item This is tricky because 60 Hz can't achieved exactly. You will have to think about the process and try to minimize the error. Many combinations of PSC and ARR values work\textemdash not just one!. 
+		\end{itemize}
+		\item Look through the Table 13 "STM32F072x8/xB pin definitions" in the chip datasheet and list all pins that can have the timer 3 capture/compare channel 1 alternate function.
+		\begin{itemize}
+			\item If the pin is included on the LQFP64 package that we are using, list the alternate function number that you would use to select it.
+		\end{itemize}
+		\item List your measured value of the timer UEV interrupt period from first experiment.
+		\item Describe what happened to the measured duty-cycle as the CCRx value increased in PWM mode 1.
+		\item Describe what happened to the measured duty-cycle as the CCRx value increased in PWM mode 2.
+		\item Include a logic analyzer screenshot of one PWM capture (doesn't matter which). 
+		\item What PWM mode is shown in figure 4.6 of the lab manual (PWM mode 1 or 2)?
+	\end{enumerate}
+\end{question}
+
 
 %\section{Lab Assignment:}
 %Tn these exercises you will be working with one or more timer peripherals in the STM32F0. You are free to use any timer you wish for the first portion on timer interrupts. However, since the timers are only routed to a limited selection of pins, you won't have a choice what timers to use for the exercises that generate PWM.  
