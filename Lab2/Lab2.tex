@@ -538,10 +538,6 @@ Properly establishing the priorities between interrupts resolves much of the pro
     
    Although the main application stops whenever the system is in an interrupt handler, the SysTick handler controlling the blue LED should continue to operate normally. This is due to the priority of the SysTick handler being higher than the EXTI and therefore has the ability to interrupt the long running hander. 
 \end{exercise}
-
-\begin{assignment}
-	Please show the TA that your program starves the other functions. Make sure that your passoff gets recorded on the passoff spreadsheet!
-\end{assignment}
   
 \begin{exercise}[Exploring Interrupt Priorities]
    \label{ex7}  
@@ -579,7 +575,7 @@ Properly establishing the priorities between interrupts resolves much of the pro
 \end{exercise}
 
 \begin{assignment}
-	Pass off this section with a TA to show that changing the priorities changes the way the LEDs function. Make sure that your passoff gets recorded on the passoff spreadsheet!
+	Pass off this section with a TA to show that you are starving your interrupt; then show how changing the priorities will eliminate this problem. Note that you will need to run your program at least twice for the TA to show this change.
 \end{assignment}
 
 \section{\color{blue}Postlab Questions}\index{Postlab Questions}
