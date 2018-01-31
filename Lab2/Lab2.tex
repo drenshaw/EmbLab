@@ -457,6 +457,8 @@ Most peripherals have a status register containing flag bits for pending interru
             \item Read the bit description of the pending flags underneath the register map: these bits require a different action to clear them.
         \end{itemize}
         \item Compile and load your application onto the Discovery board.
+        \item Use the logic analyzer to find the time delay from the button press to the start of the interrupt routine and the LEDs changing.
+        \item Take a screenshot of the result from your logic analyzer.
     \end{enumerate}
     
     \noindent If you completed all the previous exercises successfully, the red and blue LEDs should continue to blink while the green and orange LEDs toggle between each other whenever the user button is pressed. 
@@ -536,7 +538,7 @@ Properly establishing the priorities between interrupts resolves much of the pro
    
     \noindent When you press the user button, you should see the red LED stop flashing while the EXTI interrupt hander is in the delay loop. This indicates that the main application has stopped working since the processor is stuck in the long interrupt. 
     
-   Although the main application stops whenever the system is in an interrupt handler, the SysTick handler controlling the blue LED should continue to operate normally. This is due to the priority of the SysTick handler being higher than the EXTI and therefore has the ability to interrupt the long running hander. 
+   Although the main application stops whenever the system is in an interrupt handler, the SysTick handler controlling the blue LED should continue to operate normally. This is due to the priority of the SysTick handler being higher than the EXTI and therefore has the ability to interrupt the long running hander.
 \end{exercise}
   
 \begin{exercise}[Exploring Interrupt Priorities]
