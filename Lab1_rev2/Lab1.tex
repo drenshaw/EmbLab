@@ -913,7 +913,11 @@ In the first code example below, the first constant represents a register value 
 \begin{exercise}[Reading the Button Pin]
     The logical state of each GPIO pin can be determined by checking the appropriate bit in the GPIO input data register (GPIOx\_IDR). 
     
-\end{exercise}    
+\end{exercise}   
+
+\begin{warning}
+	Use only decimal and hexidecimal values (e.g., 11 or 0xB); the Keil Compiler does not accept binary representations (0b1011)!
+\end{warning} 
     
 \subsection{Enabling the System Clock to Device Peripherals}
 

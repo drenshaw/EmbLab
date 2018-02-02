@@ -220,7 +220,7 @@ Other low-power modes selectively shut down additional peripherals, system oscil
 
 The \textit{Extended Interrupts and Events Controller} (EXTI) peripheral allows non-peripheral sources to trigger interrupts. While its typical use is to generate interrupts from the GPIO pins of the device, it may also monitor various internal signals such as the brownout protection circuitry (low-voltage shutdown).
 
-The EXTI documentation begins on page 219 (Section 12.2) of the peripheral reference manual. Similar to the NVIC, bits within the EXTI registers do not feature names suggesting the signals they control. The documentation within the \textit{functional description} section on the peripheral describes the mapping between EXTI event ``lines''\textemdash input sources\textemdash and the control bits. 
+The EXTI documentation begins on page 211 (Section 11.2) of the peripheral reference manual. Similar to the NVIC, bits within the EXTI registers do not feature names suggesting the signals they control. The documentation within the \textit{functional description} section on the peripheral describes the mapping between EXTI event ``lines''\textemdash input sources\textemdash and the control bits. 
 
 
 \begin{itemize}
@@ -533,6 +533,10 @@ Properly establishing the priorities between interrupts resolves much of the pro
        \item Add a second LED toggle so that the green and orange LEDs should exchange once before and after the delay loop. 
        \item Compile and load your application onto the Discovery board.
        \item Use the logic analyzer to find the time delay from the button press to the start of the interrupt routine and the LEDs changing.
+       \begin{itemize}
+       	\item We will be using the Saleae Logic software; you can find the User Guide  \href{http://downloads.saleae.com/Logic+Guide.pdf}{\textbf{here}}.
+       	
+       \end{itemize}
        \item Take a screenshot of the result from your logic analyzer.
    \end{enumerate}
    

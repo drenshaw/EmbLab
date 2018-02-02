@@ -569,13 +569,10 @@ By programming the bit pattern for AF1 into the bit region representing PB1 in t
             \item What does increasing the CCRx value do for each PWM mode?
             \item The maximum value that an be used in the CCRx register is the ARR value. What is the relationship between PWM duty cycle and the CCRx, ARR registers?
         \end{itemize}
+    \item Take a screenshot of the effect of the duty cycle on the waveform using your logic analyzer; include this screenshot with your postlab submission.
     \end{enumerate}
     
 \end{exercise}
-
-\begin{assignment}
-	Please show the TA your logic analyzer output and effect of the duty cycle on your PWM waveform. Make sure that your passoff gets recorded on the passoff spreadsheet!
-\end{assignment}
 
 
 \section{\color{blue}Postlab Questions}\index{Postlab Questions}
@@ -585,7 +582,7 @@ By programming the bit pattern for AF1 into the bit region representing PB1 in t
 	\begin{enumerate}
 		\item Using a timer clock source of 8 MHz, calculate PSC and ARR values to get a 60 Hz interrupt.
 		\begin{itemize}
-			\item This is tricky because 60 Hz can't achieved exactly. You will have to think about the process and try to minimize the error. Many combinations of PSC and ARR values work\textemdash not just one!. 
+			\item This is tricky because precisely 60 Hz is impossible with our system; instead, think about the process and minimize the error. Many combinations of PSC and ARR values work\textemdash not just one!
 		\end{itemize}
 		\item Look through the Table 13 "STM32F072x8/xB pin definitions" in the chip datasheet and list all pins that can have the timer 3 capture/compare channel 1 alternate function.
 		\begin{itemize}
@@ -594,8 +591,8 @@ By programming the bit pattern for AF1 into the bit region representing PB1 in t
 		\item List your measured value of the timer UEV interrupt period from first experiment.
 		\item Describe what happened to the measured duty-cycle as the CCRx value increased in PWM mode 1.
 		\item Describe what happened to the measured duty-cycle as the CCRx value increased in PWM mode 2.
-		\item Include a logic analyzer screenshot of one PWM capture (doesn't matter which). 
-		\item What PWM mode is shown in figure 4.6 of the lab manual (PWM mode 1 or 2)?
+		\item Include at least one logic analyzer screenshot of a PWM capture. 
+		\item What PWM mode is shown in figure \ref{pwm_pin} of the lab manual (PWM mode 1 or 2)?
 	\end{enumerate}
 \end{question}
 
