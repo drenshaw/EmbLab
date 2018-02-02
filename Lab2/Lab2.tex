@@ -87,7 +87,7 @@
 \begin{document}
 	
 \chapterimage{chapter_head_2.png} % Chapter heading image
-\tableofcontents
+%\tableofcontents
 \chapter{Hardware Interrupts and Program Flow}
 
 \section{Overview}
@@ -304,11 +304,11 @@ Use the EXTIx registers within the SYSCFG peripheral to configure the multiplexe
             \item Each multiplexer indicates the input line/signal of the EXTI to which they connect.
         \end{itemize}
         \item Each of the EXTICRx registers control multiple pin multiplexers. Find which register contains the configuration bits for the required multiplexer. 
-        \item Configure the multiplexer to route PA0 to the EXTI input line 0 (EXTI0).
         \begin{itemize}
-            \item When accessing the EXTICRx registers in your application, you will find that they are arrays defined in \textit{stm32f0xb.h}. \\
-            \ilcode{SYSCFG->EXTICR[3] |= ...   // Accesses the EXTICR4 register}
+        	\item When accessing the EXTICRx registers in your application, you will find that they are arrays defined in \textit{stm32f0xb.h}. \\
+        	\ilcode{SYSCFG->EXTICR[3] |= ...   // Accesses the EXTICR4 register}
         \end{itemize} 
+        \item Configure the multiplexer to route PA0 to the EXTI input line 0 (EXTI0).
     \end{enumerate}
 \end{exercise}
 
