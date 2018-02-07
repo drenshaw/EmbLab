@@ -340,6 +340,7 @@ At their core, all timers are simple registers which increment or decrement when
                 \item Don't forget to clear the pending flag for the update interrupt in the status register. 
             \end{itemize}
             \item Compile and load the application onto the Discovery board.
+            \item Measure the timing between the UEV interrupt with the logic analyzer (i.e., verify that the cycle is roughly 4 Hz). Make sure to save a screenshot for your postlab!
         \end{enumerate}
         
     \end{exercise}
@@ -418,9 +419,9 @@ The three basic modes for the capture/compare channels are input capture mode, o
             \item The CCMR1 register configures channels 1 \& 2, and the CCMR2 register for channels 3 \& 4.
             \item Examine the bit definitions for the CC1S[1:0] and CC2S[1:0] bit fields; ensure that you set the channels to output. 
             \item Examine the bit definitions for the OC1M[2:0] bit field; set output channel 1 to \textit{PWM Mode 2}.
-            \item Use the OC1M[2:0] bit field to set channel 2 to \textit{PWM Mode 1}.
+            \item Use the OC2M[2:0] bit field to set channel 2 to \textit{PWM Mode 1}.
             \begin{itemize}
-                \item The OC2M bits operate identically to the OC1M and so have the same documentation. 
+                \item The OC2M bits operate identically to the OC1M, so they have the same documentation. 
                 \item You will see the difference between the different PWM modes in a later exercise.
             \end{itemize}
             \item Enable the output compare preload for both channels.

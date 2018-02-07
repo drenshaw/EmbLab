@@ -523,7 +523,9 @@ Within this lab's exercises you will be connecting the Discovery board to a PC t
 Unlike the previous labs these exercises involve multiple devices. This makes debugging slightly more complicated because there are now possible connection and software errors due to the cable and PC. Before writing the embedded application, you may want to perform a loopback test by connecting the transmit and receive lines on the adapter cable to ensure that the serial terminal is communicating with the correct virtual port. 
 
 \begin{exercise}
-	The STM32F072 has four USART peripherals available; you will need to select one of these to use. Each USART has a small selection of GPIO pins that can be used as its transmit (TX) and receive (RX) signals. Because the split connections on the end of the Adafruit USB-USART cable are fairly short, you will want to choose USART output/input pins that are relatively near a GND pin.
+	The STM32F072 has four USART peripherals available; you will need to select one of these to use. We suggest using USART3, which has had the best success for students: the connections for USART1 and USART2 use pins that are unavailable on this board (see Discovery Board Manual Section 4.14 for Extension connectors to view these pins).
+	
+	Each USART has a small selection of GPIO pins that can be used as its transmit (TX) and receive (RX) signals. Because the split connections on the end of the Adafruit USB-USART cable are fairly short, you will want to choose USART output/input pins that are relatively near a GND pin.
 	 
 	 \begin{enumerate}
 	     \item Using the chip datasheet, locate pins that connect to TX/RX signals on USART peripherals.
@@ -535,7 +537,7 @@ Unlike the previous labs these exercises involve multiple devices. This makes de
 \end{exercise}
 
 \begin{warning}
-    Ensure that both the Discovery board and USB-UART cable areunpowered when connecting them to each other. If one device is connected to the PC and the other is not, the transmit line on the powered device will feed voltage into the unpowered device through its input pin. 
+    Ensure that both the Discovery board and USB-UART cable are unpowered when connecting them to each other. If one device is connected to the PC and the other is not, the transmit line on the powered device will feed voltage into the unpowered device through its input pin. 
 \end{warning}
 
 \subsection{Blocking Transmission}	
