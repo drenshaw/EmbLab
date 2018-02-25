@@ -86,18 +86,34 @@
 \chapterimage{chapter_head_2.png} % Chapter heading image
 \chapter{The Inter-Integrated Circuit (I\textsuperscript{2}C) Interface}
 
-\section{Introduction to I\textsuperscript{2}C}
+\section{\color{blue}Prelab Questions}\index{Prelab Questions}
+\begin{question}[Prelab 5]
+	Please answer the following questions and hand in as your prelab for Lab 5.
+	% The section locations for each question needs renumbering in respect to the section to which it refers
+	\begin{enumerate}
+		\item Describe two differences between I2C master and slave devices?
+		\item What are the two connections in an I2C bus? Describe their purpose.
+		\item What is the difference between open-drain and push-pull outputs?
+		\item What is the purpose of the I2C restart condition?
+		\item What peripheral register would you use to set the read/write direction of the next I2C transaction?
+		\item The 10-bit SADD bit-field holds the slave device address. Since standard I2C addresses only use 7 bits, to which bits in the bit-field would you write the shorter address?
+		\item Name one thing you found confusing or unclear in the lab.
+		
+	\end{enumerate}
+\end{question}
+
+\section{\color{orange}Introduction to I\textsuperscript{2}C}
     \begin{wrapfigure}{R}{0.2\textwidth}
         \centering\includegraphics[width=0.125\textwidth]{i2c_logo}
         %\caption{I\textsuperscript{2}C Logo}
     \end{wrapfigure}
 
-    I\textsuperscript{2}C (Inter-Integrated Circuit), is a synchronous serial communications bus developed by Philips Semiconductor in 1982. It is usually used to connect lower-speed devices such as sensors to a microprocessor. I\textsuperscript{2}C's design enables many devices to share a single data connection and includes addressing so that each device can be individually selected without the requirement for external enable signals.
+    I\textsuperscript{2}C (Inter-Integrated Circuit), is a synchronous serial communications bus developed by Philips Semiconductor in 1982. It generally connects lower-speed devices such as sensors to a microprocessor. I\textsuperscript{2}C's design enables many devices to share a single data connection, and it includes addressing so that each device may enable individually without the need for external enable signals.
     
-    There are multiple speed standards for the  I\textsuperscript{2}C interface. The most common of these are the original 100 kHz and the 400 kHz fast-mode.
+    While multiple speed standards exist for the  I\textsuperscript{2}C interface, the most common of these are the original 100 kHz and the 400 kHz fast-mode.
 
-    \subsection{Design and Topology}
-            I\textsuperscript{2}C has a bus topology where every device directly connects to two bidirectional signal lines. Because all devices share a single connection, only one device can transmit at a time, limiting the bus to half-duplex communications. 
+    \subsection{\color{orange}Design and Topology}
+            I\textsuperscript{2}C has a bus topology where every device directly connects to two bidirectional signal lines; since all devices share a single connection, only one device may transmit at any given time, limiting the bus to half-duplex communications. 
 
             \subsubsection{Device Modes}
             Devices on an I\textsuperscript{2}C interface operate in either \textit{master} or \textit{slave} mode. 
@@ -106,10 +122,10 @@
                 \item Each slave device has an unique hardware I\textsuperscript{2}C address.
                 \item A master selects a specific slave by sending its address on the bus.
                 \item Slave devices can respond to a master device when requested, but can't start a new transaction on their own.
-                \item Some devices, such as most processors, can switch between master and slave mode.
+                \item Some devices\textemdash such as most processors\textemdash can switch between master and slave mode.
             \end{itemize}
         
-           Unlike many interfaces, I\textsuperscript{2}C allows multiple master devices to share the same bus. There is an arbitration system in the addressing protocol that resolves conflicts when multiple masters attempt to use the bus at the same time. Figure \ref{topology} shows an example of a master and slave devices connected via an I\textsuperscript{2}C bus. 
+           Unlike many interfaces, I\textsuperscript{2}C allows multiple master devices to share the same bus; an arbitration system in the addressing protocol resolves conflicts when multiple masters attempt to use the bus simultaneously. Figure \ref{topology} shows an example of a master and slave devices connected via an I\textsuperscript{2}C bus. 
 
             \begin{figure}[]
                 \centering\includegraphics[width=0.5\textwidth]{topology}
@@ -118,15 +134,15 @@
             \end{figure}
             
             %[shared figure for topology, signals, and master/slave]
-        \subsubsection{Signal Connections}
-            I\textsuperscript{2}C uses two signal lines, these are \textit{SDA} (Serial Data) and \textit{SCL} (Serial Clock). These are shown in the example interface demonstrated in figure \ref{topology}. 
+        \subsubsection{\color{orange}Signal Connections}
+            I\textsuperscript{2}C uses two signal lines, these are \textit{SDA} (Serial Data) and \textit{SCL} (Serial Clock); figure \ref{topology} shows an example interface. 
             
-            When communicating, a master device produces clock transitions on the SCL line. The slave device uses this clock signal for both receiving and transmitting data. A slave can also hold the clock line low to pause the master if it needs more time for processing. This process is called clock-stretching
+            When communicating, a master device produces clock transitions on the SCL line; the slave device uses this clock signal for both receiving and transmitting data. A slave can also hold the clock line low to pause the master if it needs more processing time, in a processes called clock-stretching
             
             Depending on the direction of communication, both the master and slave produce data on the shared SDA line. When receiving, both slave and master devices acknowledge each communication frame to notify the other that the data was received.  Both the clock and data lines use an open-drain I/O structure, this is discussed in section \ref{electrical}. 
             
             %Discuss the SDA and SCL lines, mention open-drain
-    \subsection{Electrical Characteristics} \label{electrical}
+    \subsection{\color{orange}Electrical Characteristics} \label{electrical}
         %[figure contrasting push-pull and open-drain I/O structures]
         \begin{figure}[]
             \centering\includegraphics[width=0.75\textwidth]{output_types}
@@ -134,14 +150,15 @@
             \label{output_circuit}
         \end{figure}
         
-        \subsubsection{Push-Pull vs Open Drain Outputs}
+        \subsubsection{\color{orange}Push-Pull vs Open Drain Outputs}
         Figure \ref{output_circuit} shows a simplified representation of the circuity for \textit{push-pull} and \textit{open-drain} outputs. 
         
-        Push-Pull Outputs have drive transistors that allow the device to push the output line ``high'' by connecting to the supply rail of the device, as well as pulling it ``low'' by connecting to ground. A push-pull output can source or sink current depending on the voltage of the external system. 
         
-        Open-Drain Outputs have a single transistor and can only pull the output to a low state. Because of this, open-drain systems require an external influence such as a pull-up resistor to return the line to a high state when no device is pulling it low. 
+        Push-Pull outputs have drive transistors that allow the device to push the output line ``high'' by connecting to the supply rail of the device, as well as pulling it ``low'' by connecting to ground. A push-pull output can source or sink current depending on the voltage of the external system. 
         
-        \subsubsection{Why Open-Drain for I\textsuperscript{2}C}
+        Open-Drain outputs have a single transistor and can only pull the output to a low state. Because of this, open-drain systems require an external connection\textemdash such as a pull-up resistor\textemdash to return the line to a high state when no device is pulling it low. 
+        
+        \subsubsection{\color{orange}Why Open-Drain for I\textsuperscript{2}C}
             I\textsuperscript{2}C uses open-drain outputs due to the bi-directional nature of its signal lines. Consider a push-pull connection where two devices are attempting to output different states onto a single wire. One device attempts to drive the line high by connecting to the supply rail, while the other connects to ground to drive the line low. In this event, the two devices generate a high current power-ground short circuit, likely damaging the transistors within both devices. 
             
             Open-drain systems inherently cannot cause damaging faults because all devices can only pull the signal line low. The pull-up resistor limits the total current flowing through the system, and the most severe error that can occur is corrupted data. 
@@ -156,84 +173,87 @@
     \end{figure}
     
     I\textsuperscript{2}C uses a strict protocol that defines data transfer as a series of \textit{frames} and conditions.     
-    Transmitted data is broken up into two types of frame: an address frame, where the master indicates the slave to which the data is sent and one or more data frames. Data is placed on the SDA line while the clock (SCL) is pulled low, and is sampled during the clock's rising edge. The time between the clock transition and data read/write is determined by the devices on the bus and the configuration of the I\textsuperscript{2}C peripheral. An example I\textsuperscript{2}C transaction is shown in figure \ref{overview}. 
+    Transmitted data divides into two types of frame: an address frame (indicates the slave to which the master sends the data), and one or more data frames. Data runs on the data (SDA) line while the clock (SCL) is low, which the devices samples during the clock's rising edge. The device configuration on the bus determines the time between the clock transition and data read/write: figure \ref{overview} shows an example of this. 
     
     \subsection{Address Frame}
         \subsubsection{Start Condition}
-        A master device initiates an address frame by pulling SDA low while leaving SCL high. This state, known as the \textit{start condition}, notifies all other devices that a transmission is about to begin. If two master devices concurrently attempt to take control of the bus, whichever device pulls SDA low first or transmits a lower slave address  wins the arbitration. 
+        A master device initiates an address frame by pulling SDA low while leaving SCL high. This state, known as the \textit{start condition}, notifies all other devices that a transmission is about to begin. If two master devices attempt to take control of the bus simultaneously, whichever device pulls SDA low first or transmits a lower slave address wins the arbitration. 
         \subsubsection{Addressing and the Read/Write Bit}
-        Typical I\textsuperscript{2}C addresses are 7-bits. However, some devices support an extended mode allowing for 10-bit addressing. Addresses are transmitted most significant bit (MSB) first, followed by a read/write bit indicating whether the master intends to read (1) or write (0) data to the slave device. 
+        Typical I\textsuperscript{2}C addresses are 7-bits; some devices, however, support an extended mode allowing for 10-bit addressing. Addresses transmit the most significant bit (MSB) first, followed by a read/write bit indicating whether the master intends to read (1) or write (0) data to the slave device. 
         \subsubsection{Slave Acknowledgment}
-        The final bit in all frames is the \textit{acknowledge} (ACK) bit. After completing the address or data bits of a frame, the transmitting device allows SDA to return high and waits for the receiver to respond by pulling it low. If this does not occur, indicating a \textit{not-acknowledge} or NACK condition, the transmitter can assume that the data was not received. 
+        The final bit in all frames is the \textit{acknowledge} (ACK) bit. After completing the address or data bits of a frame, the transmitting device allows SDA to return high and waits for the receiver to respond by pulling it low. If this does not occur, indicating a \textit{not-acknowledge}\textemdash or NACK condition\textemdash the transmitter can assume that the data failed to arrive correctly. 
     \subsection{Data Frame}
         \subsubsection{Data Byte}
         An I\textsuperscript{2}C transaction can contain an arbitrary number of data frames, where each frame contains a single data byte. The master device generates clock transitions on the SCL line while either the master or slave device places data on the SDA line according to the direction indicated by the read/write bit. 
         \subsubsection{Stop Condition}
-        After completing the entire transaction, the master generates a \textit{stop condition} and signals the release of the bus. Stop conditions are indicated by a low to high transition of SDA, while the clock (SCL) remains high. During normal data transfer, SDA only changes state while the SCL signal is low. 
+        After completing the entire transaction, the master generates a \textit{stop condition} and signals the release of the bus; a low to high transition of the SDA while the clock (SCL) remains high indicates a stop condition. During normal data transfer, SDA only changes state while the SCL signal is low. 
         \subsubsection{Restart Condition}
-        Because I\textsuperscript{2}C is a half-duplex bus, master and slave devices can not transmit simultaneously. If a master wishes to both write and read from a slave, it must begin a new transaction with the read/write bit set correctly. 
+        Because I\textsuperscript{2}C is a half-duplex bus, master and slave devices can not transmit simultaneously. If a master wishes to both write and read from a slave, it must begin a new transaction with the appropriate read/write bit set for each transaction. 
         
-        In the case where chained transactions are desired, ending the current transaction with a stop condition would release the bus and allow other devices to steal control before the master begins again. To prevent this, devices are allowed to issue new start conditions without properly ending the previous transaction with a stop. This event is known as a \textit{restart} condition. 
+        In the case of chained transactions, ending the current transaction with a stop condition would release the bus and allow other devices to steal control before the master begins again; to prevent this, devices may issue new start conditions without properly ending the previous transaction with a stop. We refer to this event as a \textit{restart} condition. 
 
 \section{Using the I\textsuperscript{2}C Peripheral}
     The I\textsuperscript{2}C peripheral in the STM32F0 has a high-level interface that hides much of the complexity of the bus protocol. The peripheral can automatically generate a complete I\textsuperscript{2}C transaction once the user configures basic parameters such as the slave address and number of bytes to transfer. 
     
-    While this interface is simpler than the original protocol, the user must be careful when initializing the peripheral. The I\textsuperscript{2}C peripherals in the STM32F0 support a variety of modes and speeds. Due to the strictness of the I\textsuperscript{2}C standard, incorrectly configured settings may prevent slave devices from responding.
+    While this interface is simpler than the original protocol, the user must be careful when initializing the peripheral: the I\textsuperscript{2}C peripherals in the STM32F0 support a variety of modes and speeds. Due to the stringent definitions of the I\textsuperscript{2}C standard, incorrectly configured settings may prevent slave devices from responding.
 
 \subsection{Peripheral Registers}
     \subsubsection{Control Register 1 (I2C\_CR1)}
     The control register 1 manages the overall operation of the I\textsuperscript{2}C peripheral. These settings fall into a few different categories:
     \begin{itemize}
-        \item \textbf{SMBus Configuration} -- SMBus is a more restrictive protocol designed for greater reliability than conventional I\textsuperscript{2}C. Configuration bits and registers related to SMBus should be left at default. 
-        \item \textbf{Slave Mode Configuration} -- The I\textsuperscript{2}C peripheral operates as both a slave and master device. Since we won't be using a multi-master network for this lab, these settings can be ignored. 
-        \item \textbf{Noise Filters} -- The I\textsuperscript{2}C peripheral has both analog and digital noise filters. The analog filter is enabled by default and is sufficient for normal operation. 
-        \item \textbf{Interrupt Enables} -- There are many I\textsuperscript{2}C conditions that can generate interrupts. This register controls interrupts for events such as transmission errors, completed transmissions, and when the bus is free. 
-        \item \textbf{Peripheral Enable} -- The I\textsuperscript{2}C peripheral must be enabled in this register after it is initialized. Many initialization settings are protected once this bit is enabled.
+        \item \textbf{SMBus Configuration} -- SMBus is a more restrictive protocol designed for greater reliability than conventional I\textsuperscript{2}C; configuration bits and registers related to SMBus should remain at their default values. 
+        \item \textbf{Slave Mode Configuration} -- The I\textsuperscript{2}C peripheral operates as both a slave and master device. Since we won't be using a multi-master network for this lab, you may ignore these settings. 
+        \item \textbf{Noise Filters} -- The I\textsuperscript{2}C peripheral has both analog and digital noise filters; the analog filter is enabled by default and is sufficient for normal operation. 
+        \item \textbf{Interrupt Enables} -- Many I\textsuperscript{2}C conditions can generate interrupts; this register controls interrupts for events such as transmission errors, completed transmissions, and when the bus is free. 
+        \item \textbf{Peripheral Enable} -- You must enable the I\textsuperscript{2}C peripheral in this register after initialization: many initialization settings become read-only once you set this bit.
     \end{itemize}  
     
     \subsubsection{Control Register 2 (I2C\_CR2)}
-    The control register 2 contains settings for the current I\textsuperscript{2}C transaction. As such, this register is used whenever communicating with a slave device. Understanding this register is critical to using the peripheral; bits that will be used heavily during the lab exercises are described here. 
+    The control register 2 contains settings for the current I\textsuperscript{2}C transaction; as such, use this register whenever communicating with a slave device. Understanding this register is critical to using the peripheral; the lab exercises extensively use the bits that we describe here.
     \begin{itemize}
-        \item \textbf{AUTOEND} -- When set, the peripheral will automatically generate a stop condition at the end of a transaction. This setting is undesirable when performing chained writes and reads as will be required in the lab assignment. 
-        \item \textbf{NBYTES[7:0]} -- This group of 8-bits set the number of bytes to transmit in the next transaction. These must be modified using bitwise operations to prevent overwriting the rest of the register. 
-        \item \textbf{STOP \& START} -- These bits generate start and stop conditions on the bus. The user starts a new transaction by writing to the START bit.
-        \item \textbf{RD\_WRN} -- This bit sets the direction of data transfer for the next transaction. Its state controls the read/write bit sent in the address frame. 
-        \item \textbf{SADD[9:0]} -- This group of 10-bits sets the slave address used in the next transaction. Unfortunately, the default 7-bit addressing mode uses bits [7:1] within the center of the bit field, often leading to an easy user error when learning the peripheral. These must be modified using bitwise operations to prevent overwriting the rest of the register.  
+        \item \textbf{AUTOEND} -- When set, the peripheral will automatically generate a stop condition at the end of a transaction. This setting is undesirable when performing chained writes and reads\textemdash which is necessary in the lab assignment. 
+        \item \textbf{NBYTES[7:0]} -- This group of 8-bits set the number of bytes to transmit in the next transaction; modify these bits using bitwise operations (bit-masking) to prevent overwriting the rest of the register! 
+        \item \textbf{STOP \& START} -- These bits generate start and stop conditions on the bus; the user starts a new transaction by writing to the START bit.
+        \item \textbf{RD\_WRN} -- This bit sets the direction of data transfer for the next transaction; its state controls the read/write bit in the address frame. 
+        \item \textbf{SADD[9:0]} -- This group of 10-bits sets the slave address used in the next transaction; unfortunately, the default 7-bit addressing mode uses bits [7:1] within the center of the bit field\textemdash often leading to an easy user error when learning the peripheral. Again, modify these bits using bitwise operations to prevent overwriting the rest of the register!
     \end{itemize}
     
     
     \subsubsection{Timing Register (I2C\_TIMINGR)}
-    The I\textsuperscript{2}C peripheral has a very flexible timing system which allows the user to specify slew-rates and sampling delays. These settings can adjust the peripheral to operate reliably under non-ideal conditions. The configurable timings for the peripheral are:
+    The I\textsuperscript{2}C peripheral has a very flexible timing system which allows the user to specify slew-rates and sampling delays; these settings can adjust the peripheral to operate reliably under non-ideal conditions. The configurable timings for the peripheral are:
     
     \begin{itemize}
-        \item \textbf{PRESC} -- This field sets the prescaler used by internal timers within the I\textsuperscript{2}C peripheral. These timers generate the clock signal and control when data is sampled.  
-        \item \textbf{SCLL \& SCLH} -- These fields set the high and low periods of the clock signal (SCL). Because these can be set independently, the peripheral allows the user to specify an asymmetric clock. 
+        \item \textbf{PRESC} -- This field sets the prescaler for the internal timers within the I\textsuperscript{2}C peripheral; these timers generate the clock signal and control when it samples the data.  
+        \item \textbf{SCLL \& SCLH} -- These fields set the high and low periods of the clock signal (SCL). Since you can set these independently, the peripheral allows the user to specify an asymmetric clock. 
         \item \textbf{SDADEL \& SCLDEL} -- These fields determine the data setup and hold timing used when transmitting and receiving. 
     \end{itemize}
 
     \subsubsection{Interrupt and Status Register (I2C\_ISR)}
     The read-only interrupt and status register indicates the state of every interrupt condition in the peripheral. These flag bits are also used by blocking drivers to determine the state of the bus.
     
-    The peripheral hardware clears many of these flags automatically whenever the appropriate action is completed by the user. The documentation should always be examined to determine the specific conditions required for each bit. 
+    \begin{warning}
+	    The peripheral hardware clears many of these flags automatically whenever the user completes the appropriate action\textemdash always examine the documentation to determine the specific conditions required for each bit. 
+	\end{warning}
+
     \subsubsection{Interrupt Clear Register (I2C\_ICR)}
-    The interrupt clear register is used to clear status flags that require direct acknowledgment from the user. Many of these involve error condition interrupts, and will not be used in the lab assignment.
+    The interrupt clear register clears status flags that require direct acknowledgment from the user; many of these involve error condition interrupts, so we will not use them in the lab assignment.
     
     \subsubsection{Transmit \& Receive Data Registers (I2C\_TXDR{\textbackslash}I2C\_RXDR)}
-    These registers are written and read by the user application during use of the peripheral. 
+    These registers contain the data that will transmit as well as the data that it has received from its slave device. 
     
     \subsubsection{Other Peripheral Registers}
-    The I\textsuperscript{2}C peripheral has additional registers used by the slave and SMBus modes. These should be left in their default state.
+    The I\textsuperscript{2}C peripheral has additional registers used by the slave and SMBus modes; leave these in their default state.
 
 \subsection{Initializing the Peripheral} \label{i2c_init}
    
-    The I\textsuperscript{2}C peripherals in the STM32F0 offer a variety of operating modes, and have a large set of status flags used for developing interrupt based non-blocking drivers. Depending on the modes and interrupts used, the initialization of the peripheral can be complex or relatively simple. The complete initialization process is documented in section 26.4.5 of the peripheral reference manual. 
+    The I\textsuperscript{2}C peripherals in the STM32F0 offer a variety of operating modes and have a large set of status flags for developing interrupt-based, non-blocking drivers. Depending on the modes and interrupts in use, the initialization of the peripheral can range from rather complex to relatively simple. Section 26.5 of the peripheral reference manual documents the complete initialization process. 
     
-    This lab requires only the I\textsuperscript{2}C master mode using blocking operations; these involve minimal initialization and can be configured by the following steps.
+    This lab requires only the I\textsuperscript{2}C master mode using blocking operations; these involve minimal initialization which you may configure using the following steps.
     
     \begin{itemize}
         \item Enable and configure the GPIO output pins used by the I\textsuperscript{2}C peripheral to alternate function mode.
         \begin{itemize}
-            \item Set the pin's output type to be \underline{\textit{open-drain}} in the GPIOx\_OTYPER register. 
+            \item Set the pin's output type to \textbf{\textit{open-drain}} in the GPIOx\_OTYPER register. 
             \item Set the appropriate alternate function number in the GPIOx\_AFR registers. 
         \end{itemize}
         \item Enable the I\textsuperscript{2}C system clock using the RCC peripheral.
@@ -321,7 +341,7 @@
     \end{figure}
 
 \section{Using the L3GD20 Digital Gyroscope}
-Gyroscopic sensors measure angular velocity (rate/speed of rotation) in degrees per second. The L3GD20 is a three-axis digital-output device, which returns positive values for counter-clockwise rotation, negative for clockwise, and near zero when not in motion. Figure \ref{gyro_axis} shows the orientation of the different axises and how they transition to the Discovery board. The axises can also be oriented by examining the pin 1 marking (engraved dot) on the top of the sensor packaging.  
+Gyroscopic sensors measure angular velocity (rate/speed of rotation) in degrees per second. The L3GD20 is a three-axis digital-output device, which returns positive values for counter-clockwise rotation, negative for clockwise, and near zero when not in motion. Figure \ref{gyro_axis} shows the orientation of the different axes and how they transition to the Discovery board. The axes can also be oriented by examining the pin 1 marking (engraved dot) on the top of the sensor packaging.  
 
 The L3GD20 has the capability to communicate over both SPI (serial-peripheral-interface) and I2C. The interface used is selected by the state of one of the connecting pins on the chip. 
 
@@ -344,41 +364,41 @@ Similar to the internal peripherals of the STM32F0, the L3GD20 device has a set 
 
 
 \subsubsection{Chip ID Register (WHO\_AM\_I)}
-Most devices contain an ID register with a known value documented in the datasheet. The primary purpose of the ID register is to provide something to compare against when testing driver code for the device. 
-\begin{itemize}
-    \item Address: 0x0F
-    \item Should contain the value: 0xD4
-\end{itemize}
+Most devices contain an ID register with a known value documented in the datasheet. The primary purpose of the ID register is to provide something to compare against when testing driver code for the device.  \textbf{Address: 0x0F} (should contain the value 0xD4).
+%\begin{itemize}
+%    \item Address: 0x0F
+%    \item Should contain the value: 0xD4
+%\end{itemize}
 
 \subsubsection{Control Register 1 (CTRL\_REG1)}
-The control register 1 enables the axises of the sensor and sets the output bandwidth and data-rate. 
-\begin{itemize}
-    \item Address: 0x20
-\end{itemize}
+The control register 1 enables the axes of the sensor and sets the output bandwidth and data-rate. \textbf{Address: 0x20}
+%\begin{itemize}
+%    \item Address: 0x20
+%\end{itemize}
 
 \subsubsection{Status Register (STATUS\_REG)}
-The status register indicates whether new data has been produced by the sensor and is ready to be accessed. It also contains overrun error flags which indicate that previous data was overwritten before it was read. Many of these events can be configured to produce interrupt requests on the two interrupt output pins of the chip.
-\begin{itemize}
-    \item Address: 0x27
-\end{itemize}
+The status register indicates whether new data has been produced by the sensor and is ready to be accessed. It also contains overrun error flags which indicate that previous data was overwritten before it was read. Many of these events can be configured to produce interrupt requests on the two interrupt output pins of the chip. \textbf{Address: 0x27}
+%\begin{itemize}
+%    \item Address: 0x27
+%\end{itemize}
 
 \subsubsection{X-Axis Data Registers (OUT\_X\_L \& OUT\_X\_H)}
 The L3GD20 produces 16-bit signed data for each axis. The two 8-bit registers for each axis must be shifted and bitwise OR'd together to produce the actual sensor output. These registers contain the x-axis data. 
 \begin{itemize}
-    \item OUT\_X\_L (Data Low Bytes) Address: 0x28 (0xA8 when reading both registers in same transaction)
-    \item OUT\_X\_H (Data High Bytes) Address: 0x29
+    \item OUT\_X\_L (Data Low Bytes) \textbf{Address: 0x28} (\textbf{0xA8} when reading both registers in same transaction)
+    \item OUT\_X\_H (Data High Bytes) \textbf{Address: 0x29}
     \item These registers should be read together in the same transaction. When reading multiple bytes, the L3GD20 automatically advances to the next register if the highest bit was set in the first address. 
 \end{itemize} 
 
 \subsubsection{Y-Axis Data Registers (OUT\_Y\_L \& OUT\_Y\_H)}
 These registers contain the 16-bit y-axis data. 
 \begin{itemize}
-    \item OUT\_X\_L (Data Low Bytes) Address: 0x2A (0xAA when reading both registers in same transaction)
-    \item OUT\_X\_H (Data High Bytes) Address: 0x2B
+    \item OUT\_X\_L (Data Low Bytes) \textbf{Address: 0x2A} (\textbf{0xAA} when reading both registers in same transaction)
+    \item OUT\_X\_H (Data High Bytes) \textbf{Address: 0x2B}
     \item These registers should be read together in the same transaction. When reading multiple bytes, the L3GD20 automatically advances to the next register if the highest bit was set in the first address. 
 \end{itemize}
 
-\subsubsection{Other Device Registers}
+\subsubsection{\color{orange}Other Device Registers}
 This lab uses the most basic methods of collecting data from the sensor. The L3GD20 has many advanced features such multi-mode FIFO buffers, low and high-pass filters, interrupt triggers, and threshold compare. Because of these unused features, there are multiple control registers not mentioned in this manual. These features are disabled by default and their control registers should be left in their reset/default state.
 
 
@@ -410,7 +430,7 @@ Figure \ref{gyro_pins} is a portion of the L3GD20 pinout and signal description 
 %\end{itemize}
 
 
-\section{Lab Assignment}
+\section{\color{blue}Lab Assignment}
 Within this lab's exercises you will be using I2C to communicate between the STM32F072 and the L3GD20 digital gyroscope sensor. The first exercise involves reading a single register to familiarize you with the basic concepts of writing and reading over I2C. The second exercise initializes and reads measured data from the sensor to  implement a rotation indicator using the LEDs on the discovery board. 
 
 Communicating over I2C can be very tricky unless you are comfortable with the interface and peripheral. It is very likely that you will have trouble getting your code to work properly on the first attempt. Using a logic analyzer with the I2C decoder will be very helpful as you will be able to see the different conditions of the bus and whether the transaction is progressing successfully. 
@@ -420,40 +440,45 @@ When using the logic analyzer, you will want to primarily observe the SDA and SC
 Because the operation of the I2C peripheral takes some care, the lab exercises will provide instructions on what pins to connect as well as the GPIO configuration. 
 
 \subsection{Reading the L3GD20 ``WHO\_AM\_I'' Register}
-\subsubsection{Connecting The Sensor Pins}
-Because the Discovery board is designed to use the SPI interface to connect to the sensor, some minor rewiring is necessary. Your lab aide should provide pull-up cables and jumper wires for in-lab use. Outside the scheduled lab sessions, you may need to provide your own jumpers and pull-up resistors. 
+\begin{exercise}
+	\subsubsection{Connecting The Sensor Pins}
+	Because the Discovery board is designed to use the SPI interface to connect to the sensor, some minor rewiring is necessary. Your lab aide should provide pull-up cables and jumper wires for in-lab use. Outside the scheduled lab sessions, you may need to provide your own jumpers and pull-up resistors. 
+	
+	The lab provided pull-up cables have three ends. One black/gray and two of a random matching color. The black/gray and colored ends are connected with 10 kOhm resistors. 
+	
+	\begin{enumerate}
+	    \item Connect pull-up resistors to the I2C SCL and SDA pins. 
+	    \begin{itemize}
+	        \item Connect the black/gray end of the provided pull-up cable to the \textbf{3V} power pin on the upper-left corner of the Discovery board.
+	        \item Connect one colored end to PB15 (L3GD20 SDA pin).
+	        \item Connect the other colored end to PB13 (L3GD20 SCL pin).
+	    \end{itemize}
+	    \item Connect the STM32F072 SDA pin to the L3GD20 SDA pin.
+	    \begin{itemize}
+	        \item Use a jumper wire to connect PB11 to PB15.
+	        \item It might be helpful to remember that the pins on the Discovery board can be connected from both sides of the board. 
+	    \end{itemize}
+	\end{enumerate}
+\end{exercise}
 
-The lab provided pull-up cables have three ends. One black/gray and two of a random matching color. The black/gray and colored ends are connected with 10 kOhm resistors. 
-
-\begin{enumerate}
-    \item Connect pull-up resistors to the I2C SCL and SDA pins. 
-    \begin{itemize}
-        \item Connect the black/gray end of the provided pull-up cable to the \textbf{3V} power pin on the upper-left corner of the Discovery board.
-        \item Connect one colored end to PB15 (L3GD20 SDA pin).
-        \item Connect the other colored end to PB13 (L3GD20 SCL pin).
-    \end{itemize}
-    \item Connect the STM32F072 SDA pin to the L3GD20 SDA pin.
-    \begin{itemize}
-        \item Use a jumper wire to connect PB11 to PB15.
-        \item It might be helpful to remember that the pins on the Discovery board can be connected from both sides of the board. 
-    \end{itemize}
-\end{enumerate}
-
-\subsubsection{Setting the GPIO Modes}
-Aside from the SCL and SDA pins, the L3GD20 requires additional signals to set the interface mode and slave address. Pin PC0 is connected to the SPI/I2C mode select pin, and PB14 controls the slave address when in I2C mode. 
-
-\begin{enumerate}
-    \item Enable GPIOB and GPIOC in the RCC. 
-    \item Set PB11 to alternate function mode, open-drain output type, and select I2C2\_SDA as its alternate function.
-    \item Set PB13 to alternate function mode, open-drain output type, and select I2C2\_SCL as its alternate function.
-    \item Set PB14 to output mode, push-pull output type, and initialize/set the pin high.
-    \item Set PC0 to output mode, push-pull output type, and initialize/set the pin high.
-\end{enumerate}
+\begin{exercise}
+	\subsubsection{Setting the GPIO Modes}
+	Aside from the SCL and SDA pins, the L3GD20 requires additional signals to set the interface mode and slave address. Pin PC0 is connected to the SPI/I2C mode select pin, and PB14 controls the slave address when in I2C mode. 
+	
+	\begin{enumerate}
+	    \item Enable GPIOB and GPIOC in the RCC. 
+	    \item Set PB11 to alternate function mode, open-drain output type, and select I2C2\_SDA as its alternate function.
+	    \item Set PB13 to alternate function mode, open-drain output type, and select I2C2\_SCL as its alternate function.
+	    \item Set PB14 to output mode, push-pull output type, and initialize/set the pin high.
+	    \item Set PC0 to output mode, push-pull output type, and initialize/set the pin high.
+	\end{enumerate}
+\end{exercise}
 
 \begin{warning}
     Ensure that PB11 and PB13 are set to \textbf{open-drain} output type. Otherwise, the I2C slave will not be able to respond during communication. Leave PB15 in input mode since it is connected to PB11 through a jumper wire. Modifying the mode of pin PB15 could cause a conflict if the two pins try to output different logic states. 
 \end{warning}
 
+\begin{exercise}
 \subsubsection{Initializing the I2C Peripheral}
 In this lab we will be using only the basic operation of the I2C peripheral. Because of this, most of the control bits can be left in their default state. You will only need to modify the few registers listed in the lab manual. 
 
@@ -469,7 +494,9 @@ In this lab we will be using only the basic operation of the I2C peripheral. Bec
     \end{itemize}
     \item Enable the I2C peripheral using the PE bit in the CR1 register. 
 \end{enumerate}
+\end{exercise}
 
+\begin{exercise}
 \subsubsection{Reading the Register}
 Figure \ref{trans_flow} shows a complete flowchart indicating the steps and actions required to perform blocking reads and writes to an I2C device. However, in this exercise, each step will be listed as a complete walk-through of the process of performing a basic I2C transaction. 
 
@@ -507,47 +534,79 @@ For debugging purposes you may want to set LED patterns or print USART messages 
 \end{enumerate}
 
 After successfully verifying that the ``WHO\_AM\_I'' register matches the expected value, include a logic analyzer screenshot of the I2C transaction in your postlab.
+\end{exercise}
+
+\begin{assignment}
+	Show the TA that you are correctly reading the WHO\_AM\_I register.
+\end{assignment}
  
-\subsection{Using the L3GD20 to Implement a Rotation Indicator}
+\subsection{\color{blue}Using the L3GD20 to Implement a Rotation Indicator}
 Now that you have completed basic reading and writing to the sensor, it is time to enable and use the data it produces. Since this lab is teaching basic I2C and not how to control the L3GD20 gyro effectively, you aren't required to fully initialize the device to use the FIFO buffer and other features.
 
 In this section you will be repeatedly reading the sensor's data registers within the main \texttt{while} loop of your program. Because the sensor only produces data at a defined rate (95 Hz default) you will want to introduce some delay between reads.
 
 Unlike the STM32F0 internal peripherals, you typically won't perform read-modify-write operations on remote device registers. Instead, directly calculate the desired bit pattern and overwrite the entire register. If your device doesn't appear to be operating correctly regardless of correct I2C transactions, you may want to perform a verification read after writing to check if things were written to the values you intended. 
 
-\subsubsection{Initializing the Gyroscope}
-Because we are polling the sensor in its basic mode, the only initialization step is to enable the axises and bring the device out of power-down mode. This exercise doesn't provide step-by-step instructions on how to read and write to the required registers. You will want to refer to the flowcharts in figures \ref{trans_flow} and \ref{gyro_flow}.
-
-\begin{enumerate}
-    \item Enable the X and Y sensing axis in the CTRL\_REG1 register.
-    \item Set the sensor into ``normal or sleep mode'' using the PD bit in the CTRL\_REG1 register.
-    \item All other bits in the CTRL\_REG1 register should be set to 0. These place the device in the default low-speed mode.
-\end{enumerate} 
+\begin{exercise}
+	\subsubsection{Initializing the Gyroscope}
+	Since we are polling the sensor in its basic mode, the only initialization step is enabling the axes and bringing the device out of power-down mode. This exercise does not provide step-by-step instructions on how to read and write to the required registers: you will want to refer to the flowcharts in figures \ref{trans_flow} and \ref{gyro_flow}.
+	
+	\begin{enumerate}
+	    \item Enable the X and Y sensing axes in the CTRL\_REG1 register.
+	    \item Set the sensor into ``normal or sleep mode'' using the PD bit in the CTRL\_REG1 register.
+	    \item All other bits in the CTRL\_REG1 register should be set to 0. These place the device in the default low-speed mode.
+	\end{enumerate} 
+\end{exercise}
 
 All other control registers enable advanced features such as the FIFO, interrupt and filter systems. Unless you have the base system operating, don't attempt to enable and use these. 
 
-\subsubsection{Exercise Specifications}
-You will need to implement an application that fulfills the following requirements:
-\begin{enumerate}
-    \item Initialize the L3GD20 gyroscope sensor to read the X and Y axises.
-    \item Read and save the value of the X and Y axis data registers every 100 ms.
-    \begin{itemize}
-        \item You will need to assemble the 16-bit measured value from the two data registers for each axis. 
-    \end{itemize}
-    \item Use the four LEDs to indicate whether each measured axis is positive or negative. 
-    \begin{itemize}
-        \item Because of measurement noise and to prevent the lights from triggering due to small vibrations, set a minimum threshold before changing the active LED.
-        \item Design your application such that the LED nearest the direction of rotation lights up.
-        \begin{itemize}
-            \item For example: Light the orange LED when the board is rotated/tilted in the positive X-axis direction. Refer to figure \ref{gyro_axis} for axis orientation. 
-        \end{itemize} 
-    \end{itemize}
-\end{enumerate}
+\begin{exercise}
+	\subsubsection{Exercise Specifications}
+	You will need to implement an application that fulfills the following requirements:
+	\begin{enumerate}
+	    \item Initialize the L3GD20 gyroscope sensor to read the X and Y axes.
+	    \item Read and save the value of the X and Y axis data registers every 100 ms.
+	    \begin{itemize}
+	        \item You will need to assemble the 16-bit measured value from the two data registers for each axis. 
+	    \end{itemize}
+	    \item Use the four LEDs to indicate whether each measured axis is positive or negative. 
+	    \begin{itemize}
+	        \item Because of measurement noise and to prevent the lights from triggering due to small vibrations, set a minimum threshold before changing the active LED.
+	        \item Design your application such that the LED nearest the direction of rotation lights up.
+	        \begin{itemize}
+	            \item For example: Light the orange LED when the board is rotated/tilted in the positive X-axis direction. Refer to figure \ref{gyro_axis} for axis orientation. 
+	        \end{itemize} 
+	    \end{itemize}
+	\end{enumerate}
+\end{exercise}
 
 \begin{warning}
-    Most I2C devices will automatically advance to the next register when you attempt to read multiple data bytes. The L3GD20 also contains this feature, but it \underline{must be explicitly requested} when writing the starting register address. 
+    Most I2C devices will automatically advance to the next register when you attempt to read multiple data bytes. The L3GD20 also contains this feature, but you \underline{must explicitly request this feature} when writing the starting register address. 
     
-    In order to read multiple bytes, it is necessary to set the most significant bit of the starting register address. Otherwise the device will repeatedly send the same register data for each byte requested.
+    In order to read multiple bytes, you must set the most significant bit of the starting register address; otherwise the device will repeatedly send the same register data for each byte requested.
 \end{warning}
+
+\begin{assignment}
+	Please show the TA how tilting the board in various directions lights up the appropriate LEDs.
+\end{assignment}
+
+\begin{question}[Postlab 5]
+	Please answer the following questions about I\textsuperscript{2}C and the lab, and submit your source code.
+	\begin{enumerate}
+		\item What does the AUTOEND bit in the CR2 register do? Why don't you want to use it when you'll be needing a restart condition?
+		\item This lab used standard-mode 100 kHz I2C speed. What values would you write in the TIMINGR if we were using 400 kHz fast-mode?
+		\item This lab used blocking code. To implement it completely as non-blocking you would replace all of the wait loops with interrupts. Most flags in the I2C peripheral can trigger an interrupt if the proper enable bit is set. Find the interrupt enable bits that match the following flags:
+		\begin{itemize}
+			\item TC
+			\item NACKF
+			\item TXIS (transmit interrupt)
+			\item ARLO
+		\end{itemize}
+		
+		\item The gyro can operate in three full-scale/measurement ranges, measured in degrees-per-second (dps). What are these three ranges? 
+		\item What is the I2C address of the gyro when the SDO pin is low? The lab has the pin set high, read the I2C section of the gyro datasheet.
+	\end{enumerate}
+	
+\end{question}
 
 \end{document}
