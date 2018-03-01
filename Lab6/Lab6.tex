@@ -86,11 +86,27 @@
 \chapterimage{chapter_head_2.png} % Chapter heading image
 \chapter{Analog Signals and the ADC/DAC}
 
+\section{\color{blue}Prelab Questions}\index{Prelab Questions}
+\begin{question}[Prelab 6]
+	Please answer the following questions and hand in as your prelab for Lab 6.
+	% The section locations for each question needs renumbering in respect to the section to which it refers
+	\begin{enumerate}
+		\item What is hysteresis and how does it help prevent bad behavior on digital inputs?
+		\item What is quantization?
+		\item What does Nyquist theory explain? What is the problem with sampling a signal too slowly?
+		\item The maximum resolution of the ADC is 12-bits. How many quantization steps/values does this give us?
+		\item What are the steps to perform an ADC calibration?
+		\item What's the difference between right and left-aligned data in the DAC registers?
+		\item What DAC register would you use to write 8-bit right-aligned data? (use the peripheral reference manual)
+		\item Name something you found confusing or unclear in the lab manual. If everything was clear, simply answer that you didn't have any issues.		
+	\end{enumerate}
+\end{question}
+
 %\begin{warning}
 %    This lab manual is an early revision, the content will change as it is improved and expanded. 
 %\end{warning}
 
-\section{The Analog Truth Behind Digital Signals}
+\section{\color{orange}The Analog Truth Behind Digital Signals}
 All of the signals we have been dealing with in the previous labs have been digital, in that we've been considering them as either "high" or "low". However all real-world signals are actually analog. Regardless of how cleanly and crisp a signal is when generated, it is essentially a voltage on a wire with an analog value such as 3V or 0V. As digital signals travel their sharp edged transitions soften and blur. Often, external factors introduce signal noise in the form of voltage instability/ripple or spikes and dips.
 
 Because of this, digital inputs contain circuitry to recover the original digital meaning from the messy analog signal received. The simplest method of recovering a digital signal is using a voltage threshold. Any voltage greater than the threshold value is considered a digital high, anything less than the threshold is a digital low. 
@@ -117,12 +133,12 @@ Many everyday devices use analog signals. Common examples include: sensors, spea
 \end{figure}
 
 
-\section{Representing Analog Signals Digitally}
+\section{\color{orange}Representing Analog Signals Digitally}
 When interpreting an analog signal directly as a high/low digital signal, basic hysteresis circuits such as a Schmidt trigger are sufficient. However, many systems such as sensors, produce analog signals where the specific voltage of the output represents information. For these signals we must use dedicated hardware that can represent a voltage range as a sequence of binary numbers. Unfortunately, the conversion between analog and digital is never perfect and there are a few limitations and sources of error you need to understand. 
 
 Since this isn't a digital signal processing class, we'll be covering just the barest minimum of theory required to understand the following concepts.
 
-\subsection{Quantization}
+\subsection{\color{orange}Quantization}
 Converting analog to digital is similar to setting up a range of increasing threshold values and counting how many the input signal crosses. Because of this, the fewer threshold values there are, the more granular the result and less information received about the input signal. This is the basis of \textit{quantization}.
 
 Quantization is the process of mapping a high-resolution signal to a manageable lower-resolution one. Analog signals technically have infinite resolution in their voltage levels, we would like to represent groups of these voltages as a range of digital numbers. Digital quantization is represented by the number of binary bits in its output, a 2-bit device has four values, an 8-bit system can represent 256. 
@@ -149,7 +165,7 @@ Figure \ref{quantized_sine} shows a sine-wave converted into a range of quantiza
     \label{quantized_sine}
 \end{figure}
 
-\subsection{Sampling Rate and Nyquist Theory}
+\subsection{\color{orange}Sampling Rate and Nyquist Theory}
 Unfortunately the number of voltage steps isn't the only thing we have to worry about when converting between analog and digital. Figure \ref{nyquist}, shows that at every sampling point of the analog signals, both of the two different waves shown have the same value. This problem is the core of something called Nyquist theory.
 
 \begin{figure}[]
@@ -172,7 +188,7 @@ Typically the faster you can sample an input signal the better results you'll ge
 
  In order to get a good quality representation of an analog signal you'll need to have sufficient quantization resolution and sampling frequency. 
  
-\subsection{Representing Analog Signals in Software} 
+\subsection{\color{orange}Representing Analog Signals in Software} 
  Through quantization, analog signals can be represented in software as a list of numerical values. Part of the in-lab assignment uses a \textit{wave table} containing a digital representation of a single wave cycle. These tables are arrays, indexed by a counter that increments as the data is moved into the DAC. The rate at which the waveform samples are fed into the DAC determines the resulting output frequency. Figure \ref{wave_tables} contains the c-code for tables of the basic wave types.
  
  
@@ -218,7 +234,7 @@ This lab will use the main application loop to move data from a wave tables to t
 %
 %For this lab you'll want to use jumper wires to connect one of the end of the potentiometer to 3V and the other to GND. The center (tap) pin will be the analog voltage output, you'll need to connect that to whatever pin you are using as the ADC input.  
  
-\section{The Analog to Digital Converter (ADC)}
+\section{\color{orange}The Analog to Digital Converter (ADC)}
 Similarly to the USART the analog-to-digital converter of the STM32F0 is a remarkably powerful and flexible peripheral. The on-chip 12-bit successive approximation (SAR) ADC has 19 multiplexed measurement channels of which 16 are connected to external pins and the others measuring internal peripherals and sensors. The ADC can be configured to scan enabled channels in a variety of patterns and conversions are either triggered by hardware events (such as a timer update event) or the ADC can be configured to continuously run. See section 13.4.8 in the peripheral reference manual for information about the ADC's operational modes. 
 
 The output of the ADC can be configured into a few different bit-width's depending on the conversion time, storage capacity and resolution requirements of the user application. The ADC can output data in either 12-bit, 10-bit, 8-bit or 6-bit resolution. As the output resolution decreases, the amount of time required for each analog conversion drops.
@@ -323,74 +339,103 @@ Scan through the table looking at the additional functions available for the GPI
 \subsubsection{Setting a Pin's Additional (Analog) Function}
 Unlike the alternate function system the analog bus on the STM32F0 isn't configurable. Pins are permanently assigned analog functions and beyond setting the GPIO peripheral to analog mode there isn't any additional configuration required. Setting a pin to analog mode disconnects it from the GPIO peripheral, this means that the other GPIO settings such as output speed or type don't have any effect.
 
-\section{Lab Assignment}
-The exercises in this section introduce the basic operation of the ADC and DAC peripherals. Each exercise is standalone, however they can be implemented together in the main application loop without conflict. 
+\section{\color{blue}Lab Assignment}
+The exercises in this section introduce the basic operation of the ADC and DAC peripherals. Each exercise is standalone; you may, however, implement them together in the main application loop without conflict. 
 %These peripherals are usually used as a component of a larger signal-processing system, the final exercise is optional 
-\subsection{Measuring a Potentiometer With the ADC}
-The goal of this exercise is to use the ADC to measure the position of a potentiometer and display the result using the LEDs on the Discovery board. Each LED will have a threshold voltage/value that will cause it to turn on if the measured output of the ADC is greater. Likewise, they should turn off if the value drops below the threshold. When the potentiometer is turned so that the output (center) pin's voltage increases, the LEDs should light up in sequence. \\ 
 
-\textbf{Your lab TA should have potentiometers available for use during the lab session.} For out-of-lab use, you can purchase small potentiometers from the lab stockroom. The potentiometers for sale typically require a small screwdriver to adjust and jumper wires or breadboard to connect to the Discovery board. 
+\begin{exercise}
+	\textbf{Measuring a Potentiometer With the ADC.}
+	The goal of this exercise is to use the ADC to measure the position of a potentiometer and display the result using the LEDs on the Discovery board. Each LED will have a threshold voltage/value that will cause it to turn on if the measured output of the ADC exceeds that value; likewise, they should turn off if the value drops below the threshold. When turning the potentiometer so that the output (center) pin's voltage increases, the LEDs should light up in sequence. \\ 
+	
+	\textbf{Your lab TA should have potentiometers available for use during the lab session.} For out-of-lab use, you can purchase small potentiometers from the lab stockroom. The potentiometers for sale typically require a small screwdriver to adjust and jumper wires or breadboard to connect to the Discovery board. 
+	
+	\begin{enumerate} 
+	    \item Initialize the LED pins to output.
+	    \item Select a GPIO pin to use as the ADC input.
+	    \begin{itemize}
+	        %\item Check 
+	        \item Remember that the ``ADC\_INx'' additional/analog function indicates which ADC input channel the pin connects to.
+	        \item Configure the pin to analog mode, no pull-up/down resistors.
+	        \item Connect the output (center pin) of a potentiometer to the input pin. The other two pins of the potentiometer should be connected to 3V and GND.
+	    \end{itemize} 
+	    
+	    %\begin{warning}
+	        
+	    %\end{warning}
+	
+	    \item Enable the ADC1 in the RCC peripheral. 
+	    \item Configure the ADC to 8-bit resolution, continuous conversion mode, hardware triggers disabled (software trigger only).
+	    \item Select/enable the input pin's channel for ADC conversion.
+	    \item Perform a self-calibration, enable, and start the ADC.
+	    \begin{itemize}
+	        \item The lab manual describes the basic procedure without mentioning the actual flags and conditions for advancement. 
+	        \item Use sections 13.4.1 (Calibration) and 13.4.2 (ADC on-off control) in the peripheral reference manual. 
+	    \end{itemize}
+	    \item In the main application loop, read the ADC data register and turn on/off LEDs depending on the value.
+	    \begin{itemize}
+	        \item Use four increasing threshold values, each LED should have a minimum ADC value/voltage to turn on.
+	        \item As the voltage on the input pin increases, the LEDs should light one-by-one.
+	        \item If the pin voltage decreases below the threshold for a LED, it should turn off. 
+	    \end{itemize}
+	\end{enumerate}
 
-\begin{enumerate} 
-    \item Initialize the LED pins to output.
-    \item Select a GPIO pin to use as the ADC input.
-    \begin{itemize}
-        \item Check 
-        \item Remember that the ``ADC\_INx'' additional/analog function indicates which ADC input channel the pin connects to.
-        \item Configure the pin to analog mode, no pull-up/down resistors.
-        \item Connect the output (center pin) of a potentiometer to the input pin. The other two pins of the potentiometer should be connected to 3V and GND.
-    \end{itemize} 
-    
-    \begin{warning}
-        
-    \end{warning}
+\end{exercise}
 
-    \item Enable the ADC1 in the RCC peripheral. 
-    \item Configure the ADC to 8-bit resolution, continuous conversion mode, hardware triggers disabled (software trigger only).
-    \item Select/enable the input pin's channel for ADC conversion.
-    \item Perform a self-calibration, enable, and start the ADC.
-    \begin{itemize}
-        \item The lab manual describes the basic procedure without mentioning the actual flags and conditions for advancement. 
-        \item Use sections 13.4.1 (Calibration) and 13.4.2 (ADC on-off control) in the peripheral reference manual. 
-    \end{itemize}
-    \item In the main application loop, read the ADC data register and turn on/off LEDs depending on the value.
-    \begin{itemize}
-        \item Use four increasing threshold values, each LED should have a minimum ADC value/voltage to turn on.
-        \item As the voltage on the input pin increases, the LEDs should light one-by-one.
-        \item If the pin voltage decreases below the threshold for a LED, it should turn off. 
-    \end{itemize}
-\end{enumerate}
+\begin{assignment}
+	Please show the TA that your potentiometer position turns the LEDs on or off.
+\end{assignment}
 
-
-
-\subsection{Generating Waveforms with the DAC}
+\begin{exercise}
+\textbf{Generating Waveforms with the DAC.}
 The goal of this exercise is to generate an analog waveform that can be viewed using either an oscilloscope or the analog input of a Saleae logic analyzer. The DAC peripheral will be fed values from one of the lab wave-tables located in figure \ref{wave_tables}.
 
-\begin{enumerate}
-    \item Select a GPIO pin to use as the DAC output.
-    \begin{itemize}
-        \item Remember that the ``DAC\_OUTx'' additional/analog function indicates which DAC output channel the pin connects to. 
-        \item Configure the pin to analog mode, no pull-up/down resistors.
-        \item Connect an oscilloscope probe or channel 0 of a Saleae logic analyzer to the pin.
-        \begin{itemize}
-            \item Remember that the old Saleae 16's available for checkout do not have analog capabilities. Unless you have a new-model logic analyzer, you will need to use an oscilloscope. 
-        \end{itemize}    
-    \end{itemize}
-    \item Set the used DAC channel to software trigger mode. 
-    \item Enable the used DAC channel. 
-    \item Copy one of the wave-tables in figure \ref{wave_tables} into your application. 
-    \begin{itemize}
-        \item The wave tables are 32-element arrays of unsigned 8-bit values.
-        \item Don't use the square-wave. Pick one of the sine, triangle, or sawtooth waveforms. 
-    \end{itemize}
-    \item In the main application loop, use an index variable to write the next value in the wave-table (array) to the appropriate DAC data register. 
-    \begin{itemize}
-        \item Use the one that matches closest to the value type of the wave-table.
-    \end{itemize}
-    \item Use a 1ms delay between updating the DAC to new values. 
-    \begin{itemize}
-        \item The resulting frequency of the waveform will be: \\ \textit{1 kHz (1ms between updates) / 32 samples per cycle $\approx$ 31 Hz}
-    \end{itemize}
-    \item Submit a screen capture or photograph of the oscilloscope or logic capture in your postlab.
-\end{enumerate}
+	\begin{enumerate}
+	    \item Select a GPIO pin to use as the DAC output.
+	    \begin{itemize}
+	        \item Remember that the ``DAC\_OUTx'' additional/analog function indicates which DAC output channel the pin connects to. 
+	        \item Configure the pin to analog mode, no pull-up/down resistors.
+	        \item Connect an oscilloscope probe or channel 0 of a Saleae logic analyzer to the pin.
+	        \begin{itemize}
+	            \item Remember that the old Saleae 16's available for checkout do not have analog capabilities. Unless you have a new-model logic analyzer, you will need to use an oscilloscope. 
+	        \end{itemize}    
+	    \end{itemize}
+	    \item Set the used DAC channel to software trigger mode. 
+	    \item Enable the used DAC channel. 
+	    \item Copy one of the wave-tables in figure \ref{wave_tables} into your application. 
+	    \begin{itemize}
+	        \item The wave tables are 32-element arrays of unsigned 8-bit values.
+	        \item Don't use the square-wave. Pick one of the sine, triangle, or sawtooth waveforms. 
+	    \end{itemize}
+	    \item In the main application loop, use an index variable to write the next value in the wave-table (array) to the appropriate DAC data register. 
+	    \begin{itemize}
+	        \item Use the one that matches closest to the value type of the wave-table.
+	    \end{itemize}
+	    \item Use a 1ms delay between updating the DAC to new values. 
+	    \begin{itemize}
+	        \item The resulting frequency of the waveform will be: \\ \textit{1 kHz (1ms between updates) / 32 samples per cycle $\approx$ 31 Hz}
+	    \end{itemize}
+	    \item Submit a screen capture or photograph of the oscilloscope or logic capture in your postlab.
+	\end{enumerate}
+\end{exercise}
+
+\begin{assignment}
+	Please show the TA your screenshot of your generated waveform.
+\end{assignment}
+
+\begin{question}[Postlab 6]
+	Please answer the following questions about the ADC and DAC, and submit your source code.
+	\begin{enumerate}
+		\item Some of the GPIO pins have multiple analog functions. Since the analog bus isn't configurable these pins connect to all of their analog functions at the same time. Why doesn't this cause problems?
+		\begin{itemize}
+			\item Hint: Take a close look at what the analog functions are and their input/output function\textemdash you'll need to look stuff up.
+		\end{itemize}
+		\item Consider a system where the DAC is updated every 4us (250 kHz) with a value from a 200-element wave table containing a single cycle of a waveform. What would be the frequency of the output wave? 
+		\item Consider that the ADC in 12-bit mode divides the input voltage range (0-3V) into 4096 steps (where 0V is 0, and 3V is 4095).
+		\begin{itemize}
+			\item What is the voltage/measurement resolution (how much does the voltage change per bit) of the ADC?
+			\item What would be the ADC output value (nearest integer) if the input voltage was 1.75V?
+		\end{itemize}
+	\end{enumerate}
+\end{question}
+
 \end{document}

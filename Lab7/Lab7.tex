@@ -88,6 +88,20 @@
 \chapterimage{chapter_head_2.png} % Chapter heading image
 \chapter{Modeling a PID Control System}
 
+\section{\color{blue}Prelab Questions}\index{Prelab Questions}
+\begin{question}[Prelab 7]
+	Please answer the following questions and hand in as your prelab for Lab 7.
+	% The section locations for each question needs renumbering in respect to the section to which it refers
+	\begin{enumerate}
+		\item What is the basic difference between an open and closed-loop control system?
+		\item What do the three letters in "PID" stand for? 
+		\item When does proportional control lose effectiveness?
+		\item Did you watch the intro videos?
+		\item You may also want to work through a basic Simulink tutorial, or derive your transfer functions ahead of the lab session. 
+		\href{http://www.mathworks.com/help/simulink/gs/create-a-simple-model.html}{\textbf{Simulink: Creating a simple model}}	(Links to external site)	
+	\end{enumerate}
+\end{question}
+
 %\setSectionType{Intro}
 \section{Control System Basics}
 The purpose of a control system is to direct the behavior of other devices to produce an output state that matches a requested condition. Control systems vary widely in their design and are used in many different applications such as a thermostat for household heating and cruise-control for vehicles.
@@ -110,7 +124,7 @@ Figure \ref{control_block} demonstrates the four basic parts of a closed-loop co
     \item [Control:] The control system adjusts its output (input to the plant) in order to minimize the system error. 
 \end{description}
 
-\subsection{PID Control Systems}
+\subsection{\color{orange}PID Control Systems}
 The acronym PID represents the three mathematical relations used within the control system; and stand for proportional, integral, and derivative. PID controllers are commonly used in industrial systems because they offer rapid error correction, good stability and can be tuned to react properly to the unique characteristics of a specific system.
 
 The overall equation of a PID control system can be modeled by the following equation, where $c(t)$ represents the output control, and $e(t)$ the input error. 
@@ -130,7 +144,7 @@ The outputs of each portion (proportional, integral, derivative) are combined to
     \label{pid_block}
 \end{figure}
 
-\subsubsection{Proportional}
+\subsubsection{\color{orange}Proportional}
 The proportional control factor represents the following relationship between the output control signal and the input error:
 \begin{equation*}
  c(t) = K_{p}e(t) 
@@ -139,7 +153,7 @@ The proportional control factor represents the following relationship between th
 The constant $K_{p}$ is the proportional scaling coefficient and determines the strength of the action taken to correct the error signal. Proportional feedback applies an output signal proportional to the error, essentially scaling the error by $K_{p}$.
 Proportional control provides rapid correction when the error signal is large, but loses effectiveness as the plant output nears the setpoint. Additionally, proportional control has the limitation that can not not adjust if the error persists through the initial action. 
 
-\subsubsection{Integral}
+\subsubsection{\color{orange}Integral}
 Integral control grows proportionally to the integral of the error signal, and represents the following portion of the PID equation:
 
 \begin{equation*}
@@ -150,7 +164,7 @@ Integral control begins with a small value regardless of the error's magnitude, 
 
 Because these systems are based on the integral of the error signal, they have the disadvantages of beginning slowly, and overshooting the target setpoint. This overshoot is caused by the need for an equal amount of negative error to be accumulated to return the integral's value back to zero. This phenomenon is called ``wind-up'' and is managed in most systems by setting a maximum value that the integral is allowed to accumulate. 
 
-\subsubsection{Derivative}
+\subsubsection{\color{orange}Derivative}
 The final portion of the PID controller is derivative control, representing the last portion of the system equation:
 
 \begin{equation*}
@@ -218,7 +232,7 @@ v(t) = Ri(t) + e = Ri(t) + K\dot{\theta}(t) = \frac{RJ}{K}\ddot{\theta}(t)+K\dot
 % Section about using Matlab/Simulink
    % probably just describe what they are and link to the resources
    
-\subsection{Deriving the Transfer Functions}
+\subsection{\color{orange}Deriving the Transfer Functions}
 When modeling any system the first step is to derive the characteristic transfer function. This equation represents the modeled system and supposedly responds in a mathematically accurate way when set with parameter values. Within this lab you are going to derive the transfer function of a theoretical DC motor and use simple integer values for many of its parameters. 
 
 The typical form of a transfer function of a DC motor is the angular velocity (output) divided by the input voltage $\frac{\dot{\theta}(s)}{v(s)}$. Using this function gives a reasonable estimate of motor velocity for a specific input voltage. However, as shown in the lab exercises, other coefficients such as friction will play a large role in the output of the system. 
@@ -238,69 +252,82 @@ To derive the 1st-order transfer function, follow these steps. Your goal is to c
 
 
 %\setSectionType{Exercise}
-\section{Lab Assignment: Derivation of a DC Motor Transfer Function}
-The following portions of the exercise create the ``plant'' or motor model used in the simulated control system. You will use your derived transfer functions within the Simulink model created in the second exercise. 
-\begin{enumerate}
-    \item Derive the first-order transfer function (velocity/voltage) of a DC motor without any friction and inductive effects. 
-    \begin{itemize}
-        \item You may wish to review class lecture 16 slides, the transfer function is shown there as well as this manual. You will need to show derivation work for credit! 
-        \item You will need to use Laplace transformations to solve your first-order transfer function. 
-        \item Your final equation should have the form: $\frac{\dot{\theta}(s)}{v(s)} = \,?$
-    \end{itemize}
-    \item Assuming the simple case where the torque constant \textit{K}, the moment of inertia \textit{J}, and the electrical resistance \textit{R}, all have a numerical value of 1, simulate the response of the function to a step of amplitude 1 using Matlab.
-    \begin{itemize}
-        \item The step function represents suddenly turning the motor on (providing voltage) when the motor was previously idle. 
-        \item You will need to create a vector containing values representing the step function and pass it through the derived transfer function.
-        \item The resulting output vector is the motor's velocity response.
-    \end{itemize}
-    \item Study and report the effects that changing the torque constant \textit{K}, moment of inertia \textit{J}, or electrical resistance \textit{R}, have on the motor's response to the step function.
-    \item Derive the transfer function of a DC motor with friction. Note that the effect of friction can be modeled as an opposed torque of value $f\dot{\theta}$ (with \textit{f} the friction constant).
-\end{enumerate}
+\section{\color{blue}Lab Assignment: Derivation of a DC Motor Transfer Function}
+\begin{exercise}
+	The following portions of the exercise create the ``plant'' or motor model used in the simulated control system. You will use your derived transfer functions within the Simulink model created in the second exercise. 
+	\begin{enumerate}
+	    \item Derive the first-order transfer function (velocity/voltage) of a DC motor without any friction and inductive effects. 
+	    \begin{itemize}
+	        \item You may wish to review class lecture 16 slides, the transfer function is shown there as well as this manual. You will need to show derivation work for credit! 
+	        \item You will need to use Laplace transformations to solve your first-order transfer function. 
+	        \item Your final equation should have the form: $\frac{\dot{\theta}(s)}{v(s)} = \,?$
+	    \end{itemize}
+	    \item Assuming the simple case where the torque constant \textit{K}, the moment of inertia \textit{J}, and the electrical resistance \textit{R}, all have a numerical value of 1, simulate the response of the function to a step of amplitude 1 using Matlab.
+	    \begin{itemize}
+	        \item The step function represents suddenly turning the motor on (providing voltage) when the motor was previously idle. 
+	        \item You will need to create a vector containing values representing the step function and pass it through the derived transfer function.
+	        \item The resulting output vector is the motor's velocity response.
+	    \end{itemize}
+	    \item Study and report the effects that changing the torque constant \textit{K}, moment of inertia \textit{J}, or electrical resistance \textit{R}, have on the motor's response to the step function.
+	    \item Derive the transfer function of a DC motor with friction. Note that the effect of friction can be modeled as an opposed torque of value $f\dot{\theta}$ (with \textit{f} the friction constant).
+	\end{enumerate}
+\end{exercise}
 
-\section{Lab Assignment: Simulating the Motor in Simulink}
-Within this exercise you will convert your transfer function into a form that can be used within a Simulink model. You will use your model to experiment with changing the basic motor parameters under the influence of friction.
+%\begin{assignment}
+%	
+%\end{assignment}
+
+\section{\color{blue}Lab Assignment: Simulating the Motor in Simulink}
+\begin{exercise}
+	Within this exercise you will convert your transfer function into a form that can be used within a Simulink model. You will use your model to experiment with changing the basic motor parameters under the influence of friction.
 %\ddot{\theta}
 
-\begin{enumerate}
-    \item In order to use your transfer function within Simulink, you will need to rewrite to represent only the velocity. 
-    \begin{itemize}
-        \item Your original transfer function was in the form $\frac{\dot{\theta}(s)}{v(s)} = \,?$, you will need to convert it into $\dot{\theta}(s) = \frac{1}{s}*\,?$
-        \item You will want to isolate the Laplace ``$s$'' term from the rest of the equation. This is because Simulink represents integration as a discrete ``$\frac{1}{s}$'' block. 
-    \end{itemize}
-    \item Create a Simulink subsystem model of the transfer function you derived. It should take the coefficients for the moment of inertia, friction, torque constant and voltage.
-    \begin{itemize}
-        \item See Figures \ref{subsystem} and \ref{subsystem_detail} for examples of what the interface and contents of the subsystem should resemble. (Figure \ref{subsystem_detail} doesn't represent an actual transfer function. \textbf{Don't try to use it!})
-        \item Assume that the motor resistance is 1 to simplify the system. ($R=1$)
-        \item The following tutorial on subsystems may be helpful:\\ \href{http://www.mathworks.com/help/simulink/ug/creating-subsystems.html}{http://www.mathworks.com/help/simulink/ug/creating-subsystems.html}
-     \end{itemize}
-    \item Simulate the system using a step function of amplitude 1 for the voltage; with values for the torque constant \textit{K}, and moment of inertia \textit{J} set to 1. 
-    \begin{itemize}
-        \item Simulate the model using different values for the friction parameter.
-        \item The results should be similar to the second portion of the first exercise when the friction factor is zero. What happens if when the friction factor increases?
-    \end{itemize}
-    \item Perform a simulation with a step function controlling the friction parameter. (so it changes in the middle of the simulation) What happens, and why would friction dynamically change in a physical system? 
-\end{enumerate}
+	\begin{enumerate}
+	    \item In order to use your transfer function within Simulink, you will need to rewrite it to represent only the velocity. 
+	    \begin{itemize}
+	        \item Your original transfer function was in the form $\frac{\dot{\theta}(s)}{v(s)} = \,?$, you will need to convert it into $\dot{\theta}(s) = \frac{1}{s}*\,?$
+	        \item You will want to isolate the Laplace ``$s$'' term from the rest of the equation. This is because Simulink represents integration as a discrete ``$\frac{1}{s}$'' block. 
+	    \end{itemize}
+	    \item Create a Simulink subsystem model of the transfer function you derived. It should take the coefficients for the moment of inertia, friction, torque constant and voltage.
+	    \begin{itemize}
+	        \item See Figures \ref{subsystem} and \ref{subsystem_detail} for examples of what the interface and contents of the subsystem should resemble. Figure \ref{subsystem_detail} doesn't represent an actual transfer function\textemdash \textbf{don't try to use it!}
+	        \item Assume that the motor resistance is 1 to simplify the system. ($R=1$)
+	        \item The following tutorial (link) on subsystems may be helpful:\\ \href{http://www.mathworks.com/help/simulink/ug/creating-subsystems.html}{\textbf{Creating a Simulink Subsystem}}
+	     \end{itemize}
+	    \item Simulate the system using a step function of amplitude 1 for the voltage; with values for the torque constant \textit{K}, and moment of inertia \textit{J} set to 1. 
+	    \begin{itemize}
+	        \item Simulate the model using different values for the friction parameter.
+	        \item The results should be similar to the second portion of the first exercise when the friction factor is zero. What happens if when the friction factor increases?
+	    \end{itemize}
+	    \item Perform a simulation with a step function controlling the friction parameter. (so it changes in the middle of the simulation) What happens, and why would friction dynamically change in a physical system? 
+	\end{enumerate}
+\end{exercise}
 
-\section{Lab Assignment: Designing a PI Controller in Simulink}
+\begin{assignment}
+	Show the TA your motor transfer function with friction effects.
+\end{assignment}
+
+\section{\color{blue}Lab Assignment: Designing a PI Controller in Simulink}
 This exercise simulates portions of a PI (proportional \& integral) control system within the Simulink modeling framework. After completing this portion, you should understand the basic operation and be able to tune the modeled system for reasonable performance. 
 
-\begin{enumerate}
-    \item Implement a feedback control using only the proportional term. 
-    \begin{itemize}
-        \item Add a saturation block/module on the output of the control system. Set this limiter to allow a maximum value of 6. This approximates reasonable limitations of your drive hardware which can't increase the output voltage past what is supplied.  
-        \item Study and comment the response of the system.
-    \end{itemize}
-    \item Improve the feedback control loop by adding an integral term. 
-    \begin{itemize}
-        \item Study and comment on the response of the system.
-        \item You may need to scale the integral and proportional terms to prevent the system from oscillating.
-    \end{itemize}
-    
-    
-\end{enumerate}
+\begin{exercise} Please complete the following assignment.
+	\begin{enumerate}
+	    \item Implement a feedback control using only the proportional term. 
+	    \begin{itemize}
+	        \item Add a saturation block/module on the output of the control system. Set this limiter to allow a maximum value of 6. This approximates reasonable limitations of your drive hardware which can't increase the output voltage past what is supplied.  
+	        \item Study and comment the response of the system.
+	    \end{itemize}
+	    \item Improve the feedback control loop by adding an integral term. 
+	    \begin{itemize}
+	        \item Study and comment on the response of the system.
+	        \item You may need to scale the integral and proportional terms to prevent the system from oscillating.
+	    \end{itemize}
+	\end{enumerate}
+\end{exercise}
 
-
-
+\begin{assignment}
+	Show the TA your PI feedback system.
+\end{assignment}
 
 \begin{figure}[tb]
     \centering\includegraphics[width=.5\textwidth]{subsystem}
@@ -319,6 +346,25 @@ This exercise simulates portions of a PI (proportional \& integral) control syst
     \end{center}
 \end{figure}
 
+\begin{question}[Postlab 7]
+	Please answer the following questions about the lab.
+	\begin{enumerate}
+		\item Derivation of the 1st-order transfer function without friction.
+		\item Discussion on the effects of simulating the transfer function while changing the different constants.
+		\begin{itemize}
+			\item Just a brief mention of the effect that changing each parameter has on the simulation is sufficient. No need for details, or many trials. 
+		\end{itemize}
+		\item Derivation of the 1st-order transfer function with friction.
+		\item Rearranged transfer function for use in Simulink.
+		\item Screenshot of your Simulink subsystem model.
+		\item Labeled screenshot of one simulation of the subsystem model.
+		\item What happens when the friction parameter changes mid-simulation?
+		\item What can cause friction to dynamically change in a physical system?
+		\item Screenshot and mention on the performance of your proportional control system. 
+		\item Screenshot and mention on the performance of your integral control system. 
+		
+	\end{enumerate}
+\end{question}
 
 \end{document}
 

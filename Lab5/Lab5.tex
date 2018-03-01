@@ -246,7 +246,7 @@
 
 \subsection{Initializing the Peripheral} \label{i2c_init}
    
-    The I\textsuperscript{2}C peripherals in the STM32F0 offer a variety of operating modes and have a large set of status flags for developing interrupt-based, non-blocking drivers. Depending on the modes and interrupts in use, the initialization of the peripheral can range from rather complex to relatively simple. Section 26.5 of the peripheral reference manual documents the complete initialization process. 
+    The I\textsuperscript{2}C peripherals in the STM32F0 offer a variety of operating modes and have a large set of status flags for developing interrupt-based, non-blocking drivers. Depending on the modes and interrupts in use, the initialization of the peripheral can range from rather complex to relatively simple. Section 25.4 of the peripheral reference manual documents the complete initialization process. 
     
     This lab requires only the I\textsuperscript{2}C master mode using blocking operations; these involve minimal initialization which you may configure using the following steps.
     
@@ -528,8 +528,8 @@ For debugging purposes you may want to set LED patterns or print USART messages 
     \begin{itemize}
         \item Continue if the RXNE flag is set. 
     \end{itemize}
-    \item Check the contents of the RXDR register to see if it matches 0xD4. (expected value of the ``WHO\_AM\_I'' register) 
     \item Wait until the TC (Transfer Complete) flag is set.
+    \item Check the contents of the RXDR register to see if it matches 0xD4. (expected value of the ``WHO\_AM\_I'' register) 
     \item Set the STOP bit in the CR2 register to release the I2C bus.
 \end{enumerate}
 
