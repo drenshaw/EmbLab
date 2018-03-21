@@ -1,0 +1,137 @@
+
+
+\documentclass[openany,12pt,fleqn]{book} % Default font size and left-justified equations
+
+\input{structure} % Insert the commands.tex file which contains the majority of the structure behind the template
+\usepackage{float}
+
+\usepackage{listings} 
+\lstset
+{ 
+    language=C,
+    basicstyle=\ttfamily,
+    columns=fullflexible,
+    keepspaces=true,
+    numbers=none,
+    stepnumber=1,
+    showstringspaces=false,
+    tabsize=1,
+    breaklines=true,
+    breakatwhitespace=false,
+    keywordstyle=\color{blue!80!black},
+    stringstyle=\color{red!80!black},
+    commentstyle=\color{green!40!black},
+    morecomment=[l][\color{magenta!80!black}]{\#}
+}
+
+\usepackage{caption}
+\captionsetup[figure]{font=small,skip=10pt}
+
+%\usepackage{enumitem}
+%\setlist{noitemsep} % or \setlist{noitemsep} to leave space around whole list
+
+
+%%%%% May be too harsh to prevent paragraph breaks across pages! 
+%\interlinepenalty 10000
+\widowpenalties 1 10000
+\raggedbottom
+
+
+\newcommand{\ilcode}[1]{
+    %\vspace{0.5pt}
+    \smallskip
+    \colorbox{gray!20!white}{
+        \centering
+        \parbox{\linewidth-2\fboxsep}{
+            \lstinline@#1@
+        }
+    }
+    %\vspace{0.5pt}
+}
+
+\newcommand{\code}[3]{
+    \begin{figure}[]
+        \colorbox{gray!20!white}{
+            \parbox{\linewidth-2\fboxsep} {
+                \centering 
+                \lstinputlisting[language=C]{#1}
+            }
+        }
+        \caption{#2}
+        \label{#3}
+    \end{figure}
+}
+
+\usepackage{textcomp}
+\usepackage{wrapfig}
+\usepackage{float}
+
+\usepackage{silence} % http://ctan.org/pkg/silence
+\ErrorFilter{textcomp}{Symbol \textrightarrow not provided}
+
+% Disable paragraph indentation globally since template was indenting some and not others. (looked terrible)
+\setlength{\parindent}{0pt}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%                                                                                         %%%%
+%%%%       Soldering Lab: Surface Mount and Through-Hole Soldering                                         %%%%
+%%%%                                                                                         %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setcounter{chapter}{0} % Manually adjust chapter counter to number before desired chapter heading
+
+\begin{document}
+
+\chapterimage{chapter_head_2.png} % Chapter heading image
+\chapter*{Soldering: A Primer}
+	
+\section*{Introduction}
+Great news! We got our boards back! After all these efforts, it is now time to solder it and test it! While many of you may have some experience with soldering, it would be a good idea to read through this document if it has been a while.
+
+Soldering for the first time may seem daunting, but it can be rather enjoyable and fun! This document acts as a primer for those who might be doing soldering (especially surface mount soldering) for the first time. Let's dig in.
+
+\section*{General Information about Soldering}
+We have listed several sources with information about soldering; feel free to search around for any other videos that talk about surface mount soldering.
+\begin{itemize}
+	\item Read the comic entitled \textit{Soldering is Easy} available on Canvas
+	\item Great introduction to general soldering: \href{https://youtu.be/QKbJxytERvg}{\textbf{Collin's Lab: Soldering}}
+	\item Surface mount soldering: \href{https://youtu.be/b9FC9fAlfQE}{\textbf{EEVblog Surface mount soldering tutorial}}
+	\item Another technique with SMDs: \href{https://youtu.be/0XENpPtisnM}{\textbf{Hot Air Soldering}}
+\end{itemize}
+
+\section*{Instructions}
+Buy the component kit from the stock room and come to one of the organized soldering sessions.
+
+We suggest that you buy and use the practice board from the stockroom— messing up on the practice board will have less drastic consequences than if you do that on the actual board.
+
+\begin{warning}
+\textbf{A word of advice}: work your way from smaller parts to the larger components. If you start with the large pieces, you may find it difficult to position the soldering iron adequately.
+\end{warning}
+
+\begin{exercise} \textbf{Board Assembly}
+	
+Now it is time to make the connections on your board; use the soldering station in the lab session to place and solder all of the parts.
+\end{exercise}
+
+\begin{assignment}
+	Please show the TA your soldered board.
+\end{assignment}
+
+\section*{Testing you Board and Connections}
+Now we will verify the quality of the connections using a continuity test with a multimeter.
+
+\begin{exercise} \textbf{Board Testing}
+
+Think about which connections you should test with the multimeter to ensure that you have soldered your board correctly. Not all connections will be as simple to verify as others.
+
+After verifying that you do not have any odd behavior (e.g., shorts between the different power supplies or between ground and power), test the basic functionality of your board. 
+
+Connect a power supply and try to use the H-bridge in its different modes using jumper wires to set the input conditions. Ultimately, check out a motor from the ECE stockroom and make it spin in both directions.
+\end{exercise}
+
+\begin{assignment}
+	Please show the TA that the motor rotates while connected to your board, and show that you can reverse the rotation.
+\end{assignment}
+
+\end{document}
