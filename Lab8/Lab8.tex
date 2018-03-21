@@ -89,8 +89,25 @@
 \chapter{Implementation of a PI Control System}
 
 \begin{warning}
-    \textbf{This lab involves wiring systems with different operating voltages together!} You MUST be careful how you connect things or you will damage either your board or the motor encoder. Read the lab as well as the comments in the template project carefully!
+    \textbf{This lab involves wiring systems with different operating voltages together!} You MUST be careful how you connect things, or you will damage either your board or the motor encoder. Read the lab\textemdash as well as the comments in the template project\textemdash carefully!
 \end{warning}
+
+\begin{question}[Prelab 8]
+	Please answer the following questions and hand in as your prelab for Lab 8.
+	% The section locations for each question needs renumbering in respect to the section to which it refers
+	\begin{enumerate}
+		\item What is the difference between a continuous-time and discrete-time system?
+		\item How does fixed-point represent decimal values?
+		\item In the discrete first-order integral equation in the lab, what does the input value x[n] represent when used in the integral portion of a PI control system? 
+		\begin{itemize}
+			\item Hint: Look at the equation of the PID; what's being integrated there?
+		\end{itemize}
+		\item The specific motor used in the lab has a gearbox on the output; what is the internal motor's speed when the output shaft is rotating at 125 RPM?
+		\item How many encoder counts will you get per second at a output shaft rotation of 125 RPM?
+		\item How do you control the speed of the motor using the H-Bridge?
+		\item What I/O structure types on the STM32F0 are 5V tolerant?
+	\end{enumerate}
+\end{question}
 
 %\setSectionType{Intro}
 \section{Control System Implementation}
@@ -105,7 +122,7 @@ In the previous lab we modeled a PI controller similar to the one shown in figur
 
 This lab explores implementing a similar control system using software on the STM32F0. Unlike the model, software-driven systems exhibit some limitations that require some adaption from the traditional control system equations. 
 
-\subsection{Discrete-Time Control}
+\subsection{\color{orange}Discrete-Time Control}
 
 The Simulink model that you created in the previous lab operated in \textit{continuous-time}. This is evident by the use of the Laplace transform to solve the transfer function and represent the integration in the PI controller. Continuous-time systems have a theoretically infinite time resolution, i.e. there is no minimum unit of time that can not be divided further where a result can't be calculated. Many mechanical and analog electronic systems (such as op-amps) are examples of real-world continuous-time systems. 
 
@@ -113,14 +130,14 @@ In contrast, \textit{discrete-time} systems operate only on periodic intervals. 
 
 Because continuous systems continuously monitor and react to changes in their inputs, they are more responsive than discrete-time systems that only react once after sampling. If a continuous Simulink model were adapted to discrete-time, you would see a significantly worse response than previous, due to the fact that it adjusts on comparatively slow time intervals. Within this lab you will see similar effects caused by how often the PI control loop is run as well as the sampling rate of the motor speed.  
 
-\subsection{Fixed-Point Numbers}
+\subsection{\color{orange}Fixed-Point Numbers}
 One of the major complications of this lab is that our measured motor speed and error signals are unlikely to result in integer values once converted to meaningful units. The easiest solution is to use floating-point numbers, however this has the disadvantage of introducing large libraries and slow execution. 
 
 In lieu of using floating-point, this lab will use a \textit{fixed-point} number representation. Standard binary integers assign a power-of-two value to each bit, the 0\textsuperscript{th} bit has the value of $2^{0}$ (1), the first has the value $2^{1}$ (2) and so on. In fixed-point, a virtual decimal point is placed in a known position in the variable's bits. Any bits above the decimal point represent integer values, the others below represent fractional values with their values representing $2^{-1}$ (0.5), $2^{-2}$ (0.25) and so on...
 Fixed-point is a bit trickier to use with because you manually interpret what is integer and fractional. However, it requires standard integer math operations while giving sub-integer results. 
 
 
-\subsection{Discrete Integrals}
+\subsection{\color{orange}Discrete Integrals}
 
 When converting a modeled PI controller into code, the proportional portion is fairly straightforward. $(output = error * gain)$ However the concept of an integrator isn't one that easily fits into a simple equation at first glance. To do this we must first introduce a small portion of discrete math.
 
@@ -194,7 +211,7 @@ Because of the stress the electronic brake would cause to the motor, it isn't a 
 
 \noindent By connecting the enable pin to a PWM output, we'll get a very similar output signal from the H-bridge. This amplified PWM signal approximates driving the motor with an analog voltage. In order to stop the motor completely, simply hold the enable pin low long enough that the motor stops turning. 
 
-\subsection{Quadrature Encoders}
+\subsection{\color{orange}Quadrature Encoders}
 
 Digital encoders are devices that output a series of pulses as the motor shaft rotates. By measuring the time between pulses or counting how many pulses arrive within a time period it is possible to determine the speed of the motor shaft. Quadrature encoders get their name because they output quadrature-phase signals that are 90° out of phase with each other. By looking at what signal leads (rises first) the other it is possible to tell the direction that the motor is rotating. Figure \ref{quadrature} shows an example of two quadrature-phase signals that will resemble the output of the encoder used in the lab.
 
@@ -336,8 +353,8 @@ STMStudio's connection can persist across STM32F0 resets, if you need to reset t
 
 \newpage
 %\setSectionType{Exercise}
-\section{Lab Assignment: Implementation of a PI Controller}
-
+\section{\color{blue}Lab Assignment: Implementation of a PI Controller}
+\begin{exercise}
 This lab exercise is to write a program performing the following tasks:
 \begin{itemize}
     \item Tracks motor speed through a quadrature encoder.
@@ -350,18 +367,19 @@ This lab depends on external components that you may need to check-out or purcha
 \begin{itemize}
     \item Jumper wire kit
     \begin{itemize}
-        \item There may be jumper wires available from the TA, but kits are available in the stockroom for purchase.
+        \item The TAs may have a few jumper wires, but kits are available in the stockroom for purchase.
     \end{itemize}
     \item Polulu Gear Motor 
     \begin{itemize}
-        \item You'll want to check this out from the digital lab window, ask for the motor for the embedded systems class
+        \item You'll want to check this out from the digital lab window: ask for the motor for the embedded systems class.
     \end{itemize}
     \item H-Bridge Board
     \begin{itemize}
-        \item Hopefully your board you designed for Homework 1.4 operates correctly. If not, then there are a limited number of boards available from the TA.
+        \item Ideally, your board you designed operates correctly; if not, the TAs or the stockroom have a limited number of boards available for checkout.
     \end{itemize}
 \end{itemize}
 Before starting on code development you should connect the motor system together and test to see if the H-bridge is operational. You can test the H-bridge by manually wiring the direction and enable pins to 3V or GND. Use the table in figure \ref{hbridge} to select a direction of rotation and enable the output, the motor should begin rotating once power is applied. 
+\end{exercise}
 
 \begin{warning}
     \textbf{Be careful not to connect the motor connector backwards!} If you do, you'll reverse power and ground on the quadrature encoder. Most devices aren't designed for this condition and you'll likely fry it.
@@ -386,9 +404,15 @@ Your goal is to complete the program by filling in portions of missing code acco
     \item[lab8.tsc] -- This is a STMStudio configuration file that sets up variable viewers and display equations.
 \end{description}
 
-\section{Lab Assignment: Tuning the Controller}
+%\begin{assignment}
+%	Please show the TA your working motor that achieves a certain speed.
+%\end{assignment}
 
-After you get the different pieces of the PI controller operational, it's time to tune the gain parameters to improve performance. Using what you know about the different parameters from the control system modeling lab adjust and view the system response using STMStudio for the following scenarios:
+\section{\color{blue}Lab Assignment: Tuning the Controller}
+
+After you get the different pieces of the PI controller operational, it's time to tune the gain parameters to improve performance.
+
+\begin{exercise}Using what you know about the different parameters from the control system modeling lab adjust and view the system response using STMStudio for the following scenarios:
 
 \begin{itemize}
     \item Speed change from 0 to 80 RPM
@@ -418,23 +442,26 @@ Some examples of a moderately-tuned PI controller are shown in figures \ref{tuni
 %% Full-width figure
 
 
-We don't expect perfection with the tuning of your system. As long as you have a reasonable performance increase over a un-tuned system it will be sufficient. (Operation as shown in figures \ref{tuning1} to \ref{tuning3} is acceptable.) Because it's difficult to stop and capture screenshots from STMStudio, you won't be required to include graphs in your postlab report. However, you'll need to keep track of what parameters you used and describe the behavior of the system. 
+We don't expect perfection with the tuning of your system; a reasonable performance increase over an un-tuned system it will suffice. (Operation as shown in figures \ref{tuning1} to \ref{tuning3} is acceptable.) Because it's difficult to stop and capture screenshots from STMStudio, you won't be required to include graphs in your postlab report. However, you'll need to keep track of what parameters you used and describe the behavior of the system. 
+
+\end{exercise}
+
 \begin{figure}[b!]
-    \begin{center}
-        \hspace*{-3.4cm}
-        \includegraphics[width=0.8\paperwidth]{tuning1.png}
-        \caption{Setpoint/Target transition from 0 to 80 RPM. Motor speed is shown in blue, setpoint in red, and PWM duty-cycle in purple. }
-        \label{tuning1}
-    \end{center}
+	\begin{center}
+		\hspace*{-3.4cm}
+		\includegraphics[width=0.8\paperwidth]{tuning1.png}
+		\caption{Setpoint/Target transition from 0 to 80 RPM. Motor speed is shown in blue, setpoint in red, and PWM duty-cycle in purple. }
+		\label{tuning1}
+	\end{center}
 \end{figure}
 
 \begin{figure}[]
-    \begin{center}
-        \hspace*{-3.4cm}
-        \includegraphics[width=0.8\paperwidth]{tuning2.png}
-        \caption{Setpoint/Target transition from 80 to 0 RPM. The motor requires a significant amount of time to stop even though the drive PWM is completely off. }
-        \label{tuning2}
-    \end{center}
+	\begin{center}
+		\hspace*{-3.4cm}
+		\includegraphics[width=0.8\paperwidth]{tuning2.png}
+		\caption{Setpoint/Target transition from 80 to 0 RPM. The motor requires a significant amount of time to stop even though the drive PWM is completely off. }
+		\label{tuning2}
+	\end{center}
 \end{figure}
 
 %\begin{figure}[tb]
@@ -445,12 +472,12 @@ We don't expect perfection with the tuning of your system. As long as you have a
 
 %% Full-width figure
 \begin{figure}[]
-    \begin{center}
-        \hspace*{-3.4cm}
-        \includegraphics[width=0.8\paperwidth]{tuning3.png}
-        \caption{Setpoint/Target transition from 80 to 50 RPM. Notice the undershoot and recovery on the transition}
-        \label{tuning3}
-    \end{center}
+	\begin{center}
+		\hspace*{-3.4cm}
+		\includegraphics[width=0.8\paperwidth]{tuning3.png}
+		\caption{Setpoint/Target transition from 80 to 50 RPM. Notice the undershoot and recovery on the transition}
+		\label{tuning3}
+	\end{center}
 \end{figure}
 
 %
@@ -587,7 +614,39 @@ We don't expect perfection with the tuning of your system. As long as you have a
 %        \label{subsystem_detail}
 %    \end{center}
 %\end{figure}
+\begin{assignment}
+	Please show the TA your improved control system for your motor (i.e., show that the motor performance is better than your previous control scheme).
+\end{assignment}
 
+You may find the following links useful in answering the postlab questions.
+\begin{itemize}
+	\item A simple, graphical PID explanation: \href{http://survivingtheworld.net/ScienceComic3.html}{\textbf{Surviving the World}}
+	\begin{itemize}
+		\item Note: they use an inverse form for the integral gain; we used a non-reciprocal gain.
+	\end{itemize}
+	\item Explanation on the behavior and tuning of a PID controller: \href{https://en.wikipedia.org/wiki/PID\_controller}{\textbf{PID Controller Wikipedia entry}}
+	\item Series with good explanation of common PID pitfalls and how to correct them:  \href{http://brettbeauregard.com/blog/2011/04/improving-the-beginners-pid-introduction/}{\textbf{Improving the Beginner's PID}}
+\end{itemize}
+
+\begin{question}[Postlab 8]
+	Please answer the following questions about the motor control lab, and submit your source code.
+	\begin{enumerate}
+		\item What gain parameters did you end up using for your PI controller?
+		\begin{itemize}
+			\item Describe the response of the system to speed changes.
+		\end{itemize}
+		\item Describe what the derivative control parameter does.
+		\begin{itemize}
+			\item Why it might be helpful?
+			\item Why it might cause problems?
+		\end{itemize}
+		\item List four basic issues/problems that are often encountered in a basic PID algorithm.
+		\begin{itemize}
+			\item How do you avoid or solve them?
+		\end{itemize}
+		
+	\end{enumerate}
+\end{question}
 
 \end{document}
 
