@@ -137,7 +137,7 @@
         \subsubsection{\color{orange}Signal Connections}
             I\textsuperscript{2}C uses two signal lines, these are \textit{SDA} (Serial Data) and \textit{SCL} (Serial Clock); figure \ref{topology} shows an example interface. 
             
-            When communicating, a master device produces clock transitions on the SCL line; the slave device uses this clock signal for both receiving and transmitting data. A slave can also hold the clock line low to pause the master if it needs more processing time, in a processes called clock-stretching
+            When communicating, a master device produces clock transitions on the SCL line; the slave device uses this clock signal for both receiving and transmitting data. A slave can also hold the clock line low to pause the master if it needs more processing time, in a processes called clock-stretching.
             
             Depending on the direction of communication, both the master and slave produce data on the shared SDA line. When receiving, both slave and master devices acknowledge each communication frame to notify the other that the data was received.  Both the clock and data lines use an open-drain I/O structure, this is discussed in section \ref{electrical}. 
             
