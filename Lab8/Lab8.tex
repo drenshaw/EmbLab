@@ -261,32 +261,37 @@ Table 13, shown in figure \ref{pins} has a column indicating the I/O structure f
 
 \subsection{Determining the Encoder Sampling Rate} \label{encoder_example}
 
-Our motor's quadrature encoder has 64 counts per (internal) motor shaft revolution. With the 50:1 gearbox, the motor has a maximum output rate of 200 RPM which requires the internal motor shaft to rotate at 10000 RPM resulting in 640000 encoder counts per minute. For this lab we'll be using a timer interrupt to periodically measure the value of the encoder interface to determine the output speed of the motor. However, this timer interrupt won't only be calculating the speed of the motor but also running the PI control loop.
+Our motor's quadrature encoder has 64 counts per (internal) motor shaft revolution. With the 50:1 gearbox, the motor has a maximum output rate of 200 RPM which requires the internal motor shaft to rotate at 10000 RPM resulting in 640000 encoder counts per minute.
+
+For this lab we'll be using a timer interrupt to periodically measure the value of the encoder interface to determine the output speed of the motor. However, this timer interrupt won't only be calculating the speed of the motor but also running the PI control loop.
 
 When choosing the sampling rate of the encoder, the shorter we make the period between interrupts (higher interrupt frequency) the less time we have to accumulate encoder counts for a given motor speed. In comparison, the longer the period between interrupts the more encoder counts we accumulate. 
+
 Because we are also using this interrupt to operate the PI control loop we end up with a trade-off, faster interrupts mean a faster responding PI system but also means that we get a more granular measurement of the motor speed. Slower interrupts give better speed resolution but worse PI response.
 
-When determining an appropriate speed for this lab, you'll probably want something less than a 50mS period between interrupts (20Hz, good speed resolution, bad PI response), but not anything smaller than 10mS because your encoder output will be too granular to be useful. Because we want to avoid most decimal math, we need to choose an interrupt rate that gives an integer ratio between the encoder count and the motor speed. Because typically your encoder counts per minute won't divide evenly into seconds, it can become a bit inconvenient to solve things in terms of frequency. An easier approach is to work in terms of the period between encoder counts. Since decimal values of a second can be directly converted into smaller time units, it's far easier to derive PSC (prescalar register) and ARR (auto-reload register) values to give you the desired delay between timer interrupts.
+When determining an appropriate speed for this lab, you'll probably want something less than a 50ms period between interrupts (20Hz, good speed resolution, bad PI response), but not anything smaller than 10ms because your encoder output will be too granular to be useful. Because we want to avoid most decimal math, we need to choose an interrupt rate that gives an integer ratio between the encoder count and the motor speed.
+
+Since your encoder counts per minute typically won't divide evenly into seconds, it can become somewhat inconvenient to solve in terms of frequency; an easier approach is to work in terms of the period between encoder counts. Since decimal values of a second can be directly converted into smaller time units, it's far easier to derive PSC (prescalar register) and ARR (auto-reload register) values to give you the desired delay between timer interrupts.
 
 
 \subsection{Example: Solving for an Appropriate Sampling Rate}
 
 Using the maximum motor rate rate of 200 RPM (10000 RPM internal shaft) and 640000 counts/minute we know that the period between each encoder count/pulse is (1/640000)\textsuperscript{th} of a minute. Multiplying this by 60 to get the value in seconds gives (60/640000)\textsuperscript{th} of a second. 
-At this point you will want to decide what ratio you want there to be between encoder count and output RPM. For example, if you have a ratio of 2:1 then for a speed of 200 RPM you would receive 400 encoder counts. This means that each encoder count represents a resolution of 0.5 RPM on the output. A ratio of 1:1 would give you only a resolution of 1 RPM, a ratio of 4:1 gives you 0.25 RPM. 
+At this point you will want to decide what ratio you want there to be between encoder count and output RPM. For example, if you have a ratio of 2:1 (encoder counts per revolution) then for a speed of 200 RPM you would receive 400 encoder counts. This means that each encoder count represents a resolution of 0.5 RPM on the output. A ratio of 1:1 would give you only a resolution of 1 RPM, a ratio of 4:1 gives you 0.25 RPM. 
 
 This example will use a ratio of 5:1 which results in a interrupt period that is FAR too slow to use for a PI controller, but has excellent speed resolution. While these calculations won't be useful for an actual system, they will demonstrate the concept of how to calculate things out. 
 
-With a ratio of 5:1 we receive 1000 encoder counts per timer interrupt period at an output speed of 200 RPM. Since we know the period between encoder counts, we can multiply that value to find the desired interrupt period. $(60/640000)*1000 = (60000/640000) = 0.09375$ seconds (93.75mS or 93750uS)
+With a ratio of 5:1 we receive 1000 encoder counts per timer interrupt period at an output speed of 200 RPM. Since we know the period between encoder counts, we can multiply that value to find the desired interrupt period. $(60/640000)*1000 = (60000/640000) = 0.09375$ seconds (93.75ms or 93750$\mu$s)
 
-Now that we know what the timer period we want between timer interrupts, derive PSC and ARR values that give us the appropriate delay. As demonstrated in the timers lab, a simpler way to derive these values is to use the prescaler to get the timer counting at the base unit of time that your period is in. For the above example, the decimal seconds value can be rounded with reasonable accuracy into an integer micro-second value. If using the prescaler to cause the timer to count in micro-seconds (8Mhz/8 = 1Mhz) then all that is required is to count 93750 timer tic's with the ARR value to get the desired period. 
+Now that we know what the timer period we want between timer interrupts, derive PSC and ARR values that give us the appropriate delay. As demonstrated in the timers lab, a simpler way to derive these values is to use the prescaler to get the timer counting at the base unit of time that your period is in. For the above example, the decimal seconds value can be rounded with reasonable accuracy into an integer micro-second value. If using the prescaler to cause the timer to count in micro-seconds (8MHz/8 = 1MHz) then all that is required is to count 93750 timer tic's with the ARR value to get the desired period. 
 
-Although counting to 93750 with a 32-bit timer isn't hard, this lab uses a 16-bit timer which can't count that high. Because the target is out of range at the current timer frequency (1Mhz, 1uS period) then we can increase the prescaler to cause the timer to count slower, giving us a larger time range before hitting the end of the timer. In the case of the above example, lets increase the prescaler so that we have a period of 2uS (500kHz) between every timer tick. Because each tick takes twice as long, we only need to count half as many of them as previous. This gives us (93750/2) = 46875 timer tics which is within the range of the 16-bit timer.
+Although counting to 93750 with a 32-bit timer isn't hard, this lab uses a 16-bit timer that can't count that high. Because the target is out of range at the current timer frequency (1MHz, 1$\mu$s period) then we can increase the prescaler to cause the timer to count slower, giving us a larger time range before hitting the end of the timer. In the case of the above example, lets increase the prescaler so that we have a period of 2$\mu$s (500kHz) between every timer tick. Because each tick takes twice as long, we only need to count half as many of them as previous. This gives us (93750/2) = 46875 timer tics which is within the range of the 16-bit timer.
 
 In summary: for a 5:1 ratio between encoder count and output RPM
 \begin{itemize}
     \item 16-bit timer PSC = 15 
     \item 16-bit timer ARR = 46875
-    \item Timer Interrupt Period: 93.75 mS or 10.666 Hz
+    \item Timer Interrupt Period: 93.75 ms or 10.666 Hz
 \end{itemize}
 
 
@@ -395,7 +400,7 @@ Figure \ref{system} shows an example of what your complete wiring setup might lo
 \subsubsection{Using the Template Code}
 Because of time limitations at the end of the semester, this lab provides partially-complete template code. These template files provide most of the background infrastructure such as the encoder interface.
 
-Your goal is to complete the program by filling in portions of missing code according to instructions given in the comments. Typically in larger code projects it's a bad idea to put all of the functions in the \textit{main.c} file. (gets too big and disorganized) This lab splits the motor control code into a couple of separate files: \textit{motor.h} and \textit{motor.c}. These files are available on the assignment page for download, you will need to include them in your {\textmu}Vision project.
+Your goal is to complete the program by filling in portions of missing code according to instructions within the code's comments; typically in larger code projects it's a bad idea to put all of the functions in the \textit{main.c} file. This lab splits the motor control code into a couple of separate files: \textit{motor.h} and \textit{motor.c}. These files are available on the assignment page for download, you will need to include them in your {\textmu}Vision project.
 
 \begin{description}
     \item[main.c] -- Replace the original main.c in your project with this file.
@@ -405,6 +410,8 @@ Your goal is to complete the program by filling in portions of missing code acco
 \end{description}
 
 Please copy or move the \textit{motor.h} file into the \textbf{/Inc} folder in your project directory; you may then add the \textit{motor.c} file into your project by right-clicking the "\textbf{Applications/User}" folder in Keil and click "\textbf{Add Existing Files to Group 'Application/User'}".
+
+Before moving on, look through the code provided and notice the \textbf{TODO} comments; these indicate what you should be doing in this lab. Your next steps are to determine which pins you should assign to each of the listed functions: ADC, encoder enables, timers, etc.
 
 %\begin{assignment}
 %	Please show the TA your working motor that achieves a certain speed.
